@@ -4,6 +4,7 @@
 
 ioBroker adapter for **Adria caravans and motorhomes with the MACH box**
 (MACH 2.0 / "MACH by Adria Mobil", manufactured by Solvesall d.o.o.).
+Manufacturer page: [MACH app – Adria Mobil](https://www.adria-mobil.com/mach-app).
 
 It connects to the MACH cloud with your own MACH account, the same way the
 app does over LTE, and makes the box values available in ioBroker.
@@ -95,10 +96,29 @@ Please **never** post your password, `machId`, `sharedSecret`, tokens or
 raw captures in issues.
 
 ## Changelog
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### 1.3.2 (2026-10-28)
 
-See [CHANGELOG.md](CHANGELOG.md).
+First public release. Earlier versions were developed and tested privately
+on one box (Adria Adora, MACH V2, LTE).
+
+- Login via the MACH cloud, WebSocket with AES-128-CBC and HMAC-SHA1.
+- Full state of the box at connect, every 15 minutes and shortly after
+  every push message; values named from the value table of the backend
+  (`values.*`).
+- Heating on/off and target temperature can be written (verified live).
+- `control.reboot` restarts the box (at most every 10 minutes).
+- Bluetooth PIN, SIM ICCID/IMSI and modem IMEI are not stored as states.
+- Logs show `machId` and user name only shortened; tokens never.
 
 ## License
+
+MIT License
+
+Copyright (c) 2026 Martin Vierling
 
 The adapter is free software under the [MIT License](LICENSE): use it,
 copy it, change it and share it, also commercially, as long as the license
