@@ -119,7 +119,7 @@ on one box (Adria Adora, MACH V2, LTE).
 
 MIT License
 
-Copyright (c) 2026 Martin Vierling
+Copyright (c) 2026 Martin Vierling <vierling.martin@gmail.com>
 
 The adapter is free software under the [MIT License](LICENSE): use it,
 copy it, change it and share it, also commercially, as long as the license

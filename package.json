@@ -4,7 +4,7 @@
   "description": "ioBroker adapter for Adria caravans with the MACH control box (Solvesall) - unofficial",
   "author": {
     "name": "Martin Vierling",
-    "email": "noreply@users.noreply.github.com"
+    "email": "vierling.martin@gmail.com"
   },
   "homepage": "https://github.com/VierlingMt/ioBroker.mach",
   "license": "MIT",
