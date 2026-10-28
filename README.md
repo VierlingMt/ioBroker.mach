@@ -99,6 +99,9 @@ raw captures in issues.
 - Read-only states no longer use `switch.*` or `level.*` roles: on/off values
   are `indicator`, temperatures `value.temperature`, everything else `value`.
   Objects created by older versions are updated on the next start.
+- Every path segment now has its own object: `values`, `tlv` and `frames` are
+  folders, `tlv.<id>` and `frames.<id>` channels. Created on the next start
+  for existing installations.
 
 ### 1.3.5 (2026-10-28)
 

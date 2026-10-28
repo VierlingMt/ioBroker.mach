@@ -4,17 +4,17 @@
     "version": "1.3.6",
     "news": {
       "1.3.6": {
-        "en": "Read-only states no longer use switch/level roles (now indicator or value). Existing objects are updated automatically.",
-        "de": "Nur lesbare States haben keine Schalter-/Regler-Rollen mehr (jetzt indicator oder value). Vorhandene Objekte werden automatisch angepasst.",
-        "ru": "Состояния только для чтения больше не используют роли switch/level (теперь indicator или value). Существующие объекты обновляются автоматически.",
-        "pt": "Estados só de leitura deixam de usar as funções switch/level (agora indicator ou value). Os objetos existentes são atualizados automaticamente.",
-        "nl": "Alleen-lezen states gebruiken geen switch/level-rollen meer (nu indicator of value). Bestaande objecten worden automatisch bijgewerkt.",
-        "fr": "Les états en lecture seule n'utilisent plus les rôles switch/level (désormais indicator ou value). Les objets existants sont mis à jour automatiquement.",
-        "it": "Gli stati di sola lettura non usano più i ruoli switch/level (ora indicator o value). Gli oggetti esistenti vengono aggiornati automaticamente.",
-        "es": "Los estados de solo lectura ya no usan los roles switch/level (ahora indicator o value). Los objetos existentes se actualizan automáticamente.",
-        "pl": "Stany tylko do odczytu nie używają już ról switch/level (teraz indicator lub value). Istniejące obiekty są aktualizowane automatycznie.",
-        "uk": "Стани лише для читання більше не використовують ролі switch/level (тепер indicator або value). Наявні об’єкти оновлюються автоматично.",
-        "zh-cn": "只读状态不再使用 switch/level 角色（改为 indicator 或 value）。现有对象会自动更新。"
+        "en": "Read-only states no longer use switch/level roles (now indicator or value). Existing objects are updated automatically. Folders for values, tlv and frames are created.",
+        "de": "Nur lesbare States haben keine Schalter-/Regler-Rollen mehr (jetzt indicator oder value). Vorhandene Objekte werden automatisch angepasst. Ordner für values, tlv und frames werden angelegt.",
+        "ru": "Состояния только для чтения больше не используют роли switch/level (теперь indicator или value). Существующие объекты обновляются автоматически. Создаются папки для values, tlv и frames.",
+        "pt": "Estados só de leitura deixam de usar as funções switch/level (agora indicator ou value). Os objetos existentes são atualizados automaticamente. São criadas pastas para values, tlv e frames.",
+        "nl": "Alleen-lezen states gebruiken geen switch/level-rollen meer (nu indicator of value). Bestaande objecten worden automatisch bijgewerkt. Mappen voor values, tlv en frames worden aangemaakt.",
+        "fr": "Les états en lecture seule n'utilisent plus les rôles switch/level (désormais indicator ou value). Les objets existants sont mis à jour automatiquement. Des dossiers pour values, tlv et frames sont créés.",
+        "it": "Gli stati di sola lettura non usano più i ruoli switch/level (ora indicator o value). Gli oggetti esistenti vengono aggiornati automaticamente. Vengono create cartelle per values, tlv e frames.",
+        "es": "Los estados de solo lectura ya no usan los roles switch/level (ahora indicator o value). Los objetos existentes se actualizan automáticamente. Se crean carpetas para values, tlv y frames.",
+        "pl": "Stany tylko do odczytu nie używają już ról switch/level (teraz indicator lub value). Istniejące obiekty są aktualizowane automatycznie. Tworzone są foldery dla values, tlv i frames.",
+        "uk": "Стани лише для читання більше не використовують ролі switch/level (тепер indicator або value). Наявні об’єкти оновлюються автоматично. Створюються папки для values, tlv і frames.",
+        "zh-cn": "只读状态不再使用 switch/level 角色（改为 indicator 或 value）。现有对象会自动更新。 将为 values、tlv 和 frames 创建文件夹。"
       },
       "1.3.5": {
         "en": "No functional changes: release process adjusted to the ioBroker repository check.",

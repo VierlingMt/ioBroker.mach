@@ -37,6 +37,12 @@ function passendeRolle(role, type, writable) {
     return role;
 }
 
+const ORDNER_NAMEN = {
+    values: 'Values of the box (named like in the app)',
+    tlv: 'Raw values not named yet',
+    frames: 'Raw push messages not named yet',
+};
+
 const VERTRAULICH = new Set([
     'SYSTEM_BLE_PIN', 'SYSTEM_BLE_PIN_DEFAULT',
     'LTE_EMBEDDED_SIM_ICCID', 'LTE_INSERTED_SIM_ICCID', 'LTE_SIM_ID_VALUE', 'LTE_MODEM_IMEI',
@@ -152,8 +158,27 @@ class Mach extends utils.Adapter {
      * das passiert beim ersten Frame-Empfang via _upsert. Trennt
      * Object-Definition von State-Wert.
      */
+    /**
+     * Ordner ueber einem State anlegen: ioBroker verlangt fuer jeden
+     * Pfadabschnitt ein eigenes Objekt (values, tlv.<id>, frames.<id> ...).
+     */
+    async _ensureParents(idRel) {
+        const teile = idRel.split('.');
+        for (let i = 1; i < teile.length; i++) {
+            const id = teile.slice(0, i).join('.');
+            if (this.ensuredObjects.has(id)) continue;
+            await this.setObjectNotExistsAsync(id, {
+                type: i === 1 ? 'folder' : 'channel',
+                common: { name: ORDNER_NAMEN[id] || id },
+                native: {},
+            });
+            this.ensuredObjects.add(id);
+        }
+    }
+
     async _ensureObject(idRel, meta, isWritable = false) {
         if (this.ensuredObjects.has(idRel)) return;
+        await this._ensureParents(idRel);
         const role = passendeRolle(meta.role || 'value', meta.type || 'number', isWritable);
         await this.setObjectNotExistsAsync(idRel, {
             type: 'state',
