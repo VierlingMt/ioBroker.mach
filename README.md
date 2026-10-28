@@ -94,6 +94,11 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 1.3.4 (2026-10-28)
+
+- Settings page translations (`admin/i18n`) are now part of the npm package.
+- Requires admin 7.6.20.
+
 ### 1.3.3 (2026-10-28)
 
 - Settings page translated into 11 languages, with responsive layout.

@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mach",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "news": {
+      "1.3.4": {
+        "en": "Settings page translations are now included in the package. Requires admin 7.6.20.",
+        "de": "Die Übersetzungen der Einstellungsseite sind jetzt im Paket enthalten. Benötigt Admin 7.6.20.",
+        "ru": "Переводы страницы настроек теперь входят в пакет. Требуется admin 7.6.20.",
+        "pt": "As traduções da página de configuração estão agora incluídas no pacote. Requer admin 7.6.20.",
+        "nl": "De vertalingen van de instellingenpagina zitten nu in het pakket. Vereist admin 7.6.20.",
+        "fr": "Les traductions de la page de configuration sont désormais incluses dans le paquet. Nécessite admin 7.6.20.",
+        "it": "Le traduzioni della pagina delle impostazioni sono ora incluse nel pacchetto. Richiede admin 7.6.20.",
+        "es": "Las traducciones de la página de configuración ahora se incluyen en el paquete. Requiere admin 7.6.20.",
+        "pl": "Tłumaczenia strony ustawień są teraz zawarte w pakiecie. Wymaga admin 7.6.20.",
+        "uk": "Переклади сторінки налаштувань тепер входять до пакета. Потрібен admin 7.6.20.",
+        "zh-cn": "设置页面的翻译现已包含在软件包中。需要 admin 7.6.20。"
+      },
       "1.3.3": {
         "en": "Maintenance: settings page in 11 languages, timers managed by ioBroker. Requires Node.js 22, js-controller 6.0.11 and admin 7.6.17.",
         "de": "Wartung: Einstellungsseite in 11 Sprachen, Timer werden von ioBroker verwaltet. Benötigt Node.js 22, js-controller 6.0.11 und Admin 7.6.17.",
@@ -90,7 +103,7 @@
     ],
     "globalDependencies": [
       {
-        "admin": ">=7.6.17"
+        "admin": ">=7.6.20"
       }
     ],
     "licenseInformation": {
