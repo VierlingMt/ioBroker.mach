@@ -1,0 +1,9 @@
+{
+  "Settings": "Impostazioni",
+  "MACH account": "Account MACH",
+  "Enter the login of your MACH app. The machId is shown in the app under device settings (12 hex characters, e.g. A1B2C3D4E5F6).": "Inserisci i dati di accesso della tua app MACH. Il machId si trova nell'app nelle impostazioni del dispositivo (12 caratteri esadecimali, ad es. A1B2C3D4E5F6).",
+  "Username (e-mail)": "Nome utente (e-mail)",
+  "Password": "Password",
+  "machId (12 hex characters)": "machId (12 caratteri esadecimali)",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Legge tutti i valori della centralina (values.*): alla connessione, ogni 15 minuti e poco dopo ogni modifica. Scrivibile: riscaldamento acceso/spento (named.Heizung_Schalter) e temperatura impostata (named.Heizung_Sollwert). Adattatore non ufficiale, non di Adria o Solvesall."
+}

@@ -1,0 +1,9 @@
+{
+  "Settings": "设置",
+  "MACH account": "MACH 账户",
+  "Enter the login of your MACH app. The machId is shown in the app under device settings (12 hex characters, e.g. A1B2C3D4E5F6).": "请输入 MACH 应用的登录信息。machId 可在应用的设备设置中找到（12 位十六进制字符，例如 A1B2C3D4E5F6）。",
+  "Username (e-mail)": "用户名（电子邮件）",
+  "Password": "密码",
+  "machId (12 hex characters)": "machId（12 位十六进制字符）",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "读取设备的所有数值（values.*）：连接时、每 15 分钟以及每次变化后不久。可写：暖气开/关（named.Heizung_Schalter）和目标温度（named.Heizung_Sollwert）。非官方适配器，与 Adria 或 Solvesall 无关。"
+}

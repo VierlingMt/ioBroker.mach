@@ -35,3 +35,5 @@ Thumbs.db
 
 # Standalone-Tool credentials (NIE committen, enthaelt Klartext-Passwort)
 tools/mach-mitmproxy-test/credentials.json
+# Release-Skript
+.commitinfo

@@ -1,34 +1,35 @@
 {
   "common": {
     "name": "mach",
-    "version": "1.3.2",
+    "version": "1.3.3",
     "news": {
+      "1.3.3": {
+        "en": "Maintenance: settings page in 11 languages, timers managed by ioBroker. Requires Node.js 22, js-controller 6.0.11 and admin 7.6.17.",
+        "de": "Wartung: Einstellungsseite in 11 Sprachen, Timer werden von ioBroker verwaltet. Benötigt Node.js 22, js-controller 6.0.11 und Admin 7.6.17.",
+        "ru": "Обслуживание: страница настроек на 11 языках, таймеры управляются ioBroker. Требуются Node.js 22, js-controller 6.0.11 и admin 7.6.17.",
+        "pt": "Manutenção: página de configuração em 11 idiomas, temporizadores geridos pelo ioBroker. Requer Node.js 22, js-controller 6.0.11 e admin 7.6.17.",
+        "nl": "Onderhoud: instellingenpagina in 11 talen, timers worden door ioBroker beheerd. Vereist Node.js 22, js-controller 6.0.11 en admin 7.6.17.",
+        "fr": "Maintenance : page de configuration en 11 langues, minuteries gérées par ioBroker. Nécessite Node.js 22, js-controller 6.0.11 et admin 7.6.17.",
+        "it": "Manutenzione: pagina delle impostazioni in 11 lingue, timer gestiti da ioBroker. Richiede Node.js 22, js-controller 6.0.11 e admin 7.6.17.",
+        "es": "Mantenimiento: página de configuración en 11 idiomas, temporizadores gestionados por ioBroker. Requiere Node.js 22, js-controller 6.0.11 y admin 7.6.17.",
+        "pl": "Konserwacja: strona ustawień w 11 językach, timery zarządzane przez ioBroker. Wymaga Node.js 22, js-controller 6.0.11 i admin 7.6.17.",
+        "uk": "Обслуговування: сторінка налаштувань 11 мовами, таймери керуються ioBroker. Потрібні Node.js 22, js-controller 6.0.11 і admin 7.6.17.",
+        "zh-cn": "维护：设置页面支持 11 种语言，定时器由 ioBroker 管理。需要 Node.js 22、js-controller 6.0.11 和 admin 7.6.17。"
+      },
       "1.3.2": {
-        "en": "Removed an unused device list copied from a single box (opcode 0x08) so it can never be sent to another box. No functional change.",
-        "de": "Eine ungenutzte, von einer einzelnen Box stammende Geräteliste (opcode 0x08) entfernt, damit sie nie an eine andere Box gehen kann. Keine Funktionsänderung."
-      },
-      "1.3.1": {
-        "en": "Confidential values (Bluetooth PIN, SIM ICCID/IMSI, modem IMEI) are no longer written to values.*.",
-        "de": "Vertrauliche Werte (Bluetooth-PIN, SIM-ICCID/IMSI, Modem-IMEI) werden nicht mehr unter values.* abgelegt."
-      },
-      "1.3.0": {
-        "en": "Values with names: the adapter builds the app's value table from get-drivers-json and writes every known value once as values.<NAME> with its real value (text, number with divisor, category). Unknown values are stored only once as tlv.*, no longer additionally as frames.*. named.* stays. After a push the full state follows within 5-60 s.",
-        "de": "Werte mit Namen: der Adapter baut aus get-drivers-json die Wertetabelle der App und legt jeden bekannten Wert einmal als values.<NAME> mit echtem Wert ab (Text, Zahl mit Teiler, Auswahl). Unbekannte Werte nur noch einmal als tlv.*, nicht mehr zusätzlich als frames.*. named.* bleibt. Nach einer Push-Meldung folgt der Gesamtstand binnen 5-60 s."
-      },
-      "1.2.1": {
-        "en": "The full state from the box is read: the value list also contains texts longer than 8 bytes and empty entries, which the parser rejected in 1.2.0.",
-        "de": "Der Gesamtstand der Box wird gelesen: die Werteliste enthält auch Texte über 8 Byte und leere Einträge, an denen der Parser in 1.2.0 scheiterte."
-      },
-      "1.2.0": {
-        "en": "Commands are accepted by the box: the L1 check byte before FE FF is now the CRC-8 the app sends (was fixed 0x00, so the box answered every command with INCORRECT_CRC). New: full state via GET_ALL_DEVICE_VALUES on connect and every 15 min (info.lastAllValuesAt), multi-part messages are reassembled, SET_DETECTED_DEVICES removed from the handshake.",
-        "de": "Die Box nimmt Kommandos an: das L1-Prüfbyte vor FE FF ist jetzt das CRC-8 wie in der App (war fest 0x00, die Box antwortete auf jedes Kommando mit INCORRECT_CRC). Neu: Gesamtstand per GET_ALL_DEVICE_VALUES beim Verbinden und alle 15 min (info.lastAllValuesAt), mehrteilige Nachrichten werden zusammengesetzt, SET_DETECTED_DEVICES aus dem Handshake entfernt."
-      },
-      "1.1.0": {
-        "en": "New button control.reboot restarts the MACH box like \"Restart MACH\" in the app (SYSTEM_RESET, opcode 0x09). At most once per 10 min; only works while the box still responds.",
-        "de": "Neuer Button control.reboot startet die MACH-Box neu wie „MACH neu starten\" in der App (SYSTEM_RESET, opcode 0x09). Höchstens einmal je 10 min; wirkt nur, solange die Box noch antwortet."
+        "en": "First public release: reads all values of the MACH box, heating can be switched.",
+        "de": "Erste öffentliche Version: liest alle Werte der MACH-Box, die Heizung lässt sich schalten.",
+        "ru": "Первый публичный выпуск: считывает все значения блока MACH, можно управлять отоплением.",
+        "pt": "Primeira versão pública: lê todos os valores da caixa MACH, o aquecimento pode ser ligado e desligado.",
+        "nl": "Eerste openbare versie: leest alle waarden van de MACH-box, de verwarming kan worden geschakeld.",
+        "fr": "Première version publique : lit toutes les valeurs du boîtier MACH, le chauffage peut être commandé.",
+        "it": "Prima versione pubblica: legge tutti i valori della centralina MACH, il riscaldamento può essere comandato.",
+        "es": "Primera versión pública: lee todos los valores de la caja MACH, la calefacción se puede encender y apagar.",
+        "pl": "Pierwsze publiczne wydanie: odczytuje wszystkie wartości skrzynki MACH, ogrzewanie można przełączać.",
+        "uk": "Перший публічний випуск: зчитує всі значення блока MACH, опаленням можна керувати.",
+        "zh-cn": "首个公开版本：读取 MACH 设备的所有数值，可控制暖气。"
       }
     },
-    "title": "MACH (Adria)",
     "titleLang": {
       "en": "MACH (Adria)",
       "de": "MACH (Adria)",
@@ -67,7 +68,6 @@
       "solvesall"
     ],
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "mach.png",
     "extIcon": "https://raw.githubusercontent.com/VierlingMt/ioBroker.mach/main/admin/mach.png",
     "readme": "https://github.com/VierlingMt/ioBroker.mach/blob/main/README.md",
@@ -85,12 +85,12 @@
     },
     "dependencies": [
       {
-        "js-controller": ">=5.0.0"
+        "js-controller": ">=6.0.11"
       }
     ],
     "globalDependencies": [
       {
-        "admin": ">=6.0.0"
+        "admin": ">=7.6.17"
       }
     ],
     "licenseInformation": {

@@ -1,0 +1,9 @@
+{
+  "Settings": "Налаштування",
+  "MACH account": "Обліковий запис MACH",
+  "Enter the login of your MACH app. The machId is shown in the app under device settings (12 hex characters, e.g. A1B2C3D4E5F6).": "Введіть дані для входу в застосунок MACH. machId вказано в застосунку в налаштуваннях пристрою (12 шістнадцяткових символів, наприклад A1B2C3D4E5F6).",
+  "Username (e-mail)": "Ім'я користувача (e-mail)",
+  "Password": "Пароль",
+  "machId (12 hex characters)": "machId (12 шістнадцяткових символів)",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Зчитує всі значення блока (values.*): під час підключення, кожні 15 хвилин і невдовзі після кожної зміни. Запис: опалення увімк./вимк. (named.Heizung_Schalter) і задана температура (named.Heizung_Sollwert). Неофіційний адаптер, не від Adria чи Solvesall."
+}

@@ -8,46 +8,67 @@
       "items": {
         "_header": {
           "type": "header",
-          "text": "MACH-Backend-Zugang",
+          "text": "MACH account",
           "size": 4,
-          "newLine": true
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "_hint": {
           "type": "staticText",
-          "text": "Trage hier die Anmeldedaten deiner MACH-App ein. Die machId steht in der App unter Geräte-Einstellungen (12 Hex-Zeichen, z. B. A1B2C3D4E5F6).",
-          "newLine": true
+          "text": "Enter the login of your MACH app. The machId is shown in the app under device settings (12 hex characters, e.g. A1B2C3D4E5F6).",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         },
         "username": {
           "type": "text",
-          "label": "Username (E-Mail)",
+          "label": "Username (e-mail)",
           "newLine": true,
+          "xs": 12,
           "sm": 12,
           "md": 6,
           "lg": 5,
+          "xl": 5,
           "default": ""
         },
         "password": {
           "type": "password",
           "label": "Password",
           "repeat": false,
+          "xs": 12,
           "sm": 12,
           "md": 6,
           "lg": 5,
+          "xl": 5,
           "default": ""
         },
         "machId": {
           "type": "text",
-          "label": "machId (12 Hex-Zeichen)",
+          "label": "machId (12 hex characters)",
           "newLine": true,
+          "xs": 12,
           "sm": 12,
           "md": 6,
           "lg": 4,
+          "xl": 4,
           "default": ""
         },
         "_status": {
           "type": "staticText",
-          "text": "Liest alle Werte der Box (values.*), beim Verbinden, alle 15 Minuten und kurz nach jeder Änderung. Schreiben: Heizung an/aus (named.Heizung_Schalter) und Sollwert (named.Heizung_Sollwert). Inoffizieller Adapter, nicht von Adria oder Solvesall.",
-          "newLine": true
+          "text": "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
         }
       }
     }

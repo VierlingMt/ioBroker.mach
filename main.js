@@ -212,12 +212,12 @@ class Mach extends utils.Adapter {
             // sendHandshake), danach Gesamtstand holen und regelmaessig wieder.
             this.sendHandshake().then(() => {
                 this.requestAllValues('Verbindungsaufbau');
-                if (this.getAllTimer) clearInterval(this.getAllTimer);
-                this.getAllTimer = setInterval(() => this.requestAllValues('Intervall'), GET_ALL_INTERVAL_MS);
+                if (this.getAllTimer) this.clearInterval(this.getAllTimer);
+                this.getAllTimer = this.setInterval(() => this.requestAllValues('Intervall'), GET_ALL_INTERVAL_MS);
             }).catch(e => {
                 this.log.error(`Handshake error: ${e.message}`);
             });
-            this.heartbeatTimer = setInterval(() => {
+            this.heartbeatTimer = this.setInterval(() => {
                 if (this.stopping) return;
                 if (this.ws && this.ws.readyState === WebSocket.OPEN) {
                     try { this.ws.send('GET_SYSTEM_CONNECTED'); } catch (_) {}
@@ -311,7 +311,7 @@ class Mach extends utils.Adapter {
         // Periodische Diagnose-Zusammenfassung. Default 5 min auf debug-level
         // (sonst flutet das den iobroker-Log nach Tagen Laufzeit).
         // Bei loglevel=debug werden alle 30 s detaillierte Stats geloggt.
-        this.statsTimer = setInterval(() => {
+        this.statsTimer = this.setInterval(() => {
             if (this.stopping) return;
             const s = this.msgStats;
             const knownOuters = [...s.framesByOuter.keys()].filter(k => FRAME_NAMES[k]).length;
@@ -562,7 +562,7 @@ class Mach extends utils.Adapter {
     getAllNachPush() {
         if (this.getAllNachPushTimer) return;
         const warte = Math.max(GET_ALL_NACH_PUSH_MS, this.letzterGetAll + GET_ALL_MIN_ABSTAND_MS - Date.now());
-        this.getAllNachPushTimer = setTimeout(() => {
+        this.getAllNachPushTimer = this.setTimeout(() => {
             this.getAllNachPushTimer = null;
             this.requestAllValues('nach Push');
         }, warte);
@@ -576,7 +576,7 @@ class Mach extends utils.Adapter {
         try {
             this.ws.send(protocol.encodeGetAllValuesFrame(seq, this.sharedSecret));
             this.pendingWrites.set(seq, { id: null, oldValue: null, name: 'GET_ALL', ts: Date.now() });
-            setTimeout(() => this.pendingWrites.delete(seq), 15_000);
+            this.setTimeout(() => this.pendingWrites.delete(seq), 15_000);
             this.log.debug(`GET_ALL_DEVICE_VALUES gesendet (${anlass}, seq=0x${seq.toString(16).padStart(2, '0')})`);
         } catch (e) {
             this.log.warn(`GET_ALL_DEVICE_VALUES nicht gesendet: ${e.message}`);
@@ -694,7 +694,7 @@ class Mach extends utils.Adapter {
                 this.log.error(`Handshake ${step.label} failed: ${e.message}`);
                 return;
             }
-            await new Promise(r => setTimeout(r, 350));
+            await this.delay(350);
         }
         this.subscribed = true;
         this.log.info('Handshake komplett. Writes ab seq=0x0a freigeschaltet.');
@@ -752,7 +752,7 @@ class Mach extends utils.Adapter {
             this.pendingWrites.set(seq, { id, oldValue, name, ts: Date.now() });
             this.log.info(`WRITE -> ${name}=${state.val} (seq=0x${seq.toString(16).padStart(2,'0')} wire=0x${cfg.wireByte.toString(16)} val=0x${valueByte.toString(16).padStart(2,'0')})`);
             // Pending entries nach 10s automatisch aufraeumen falls keine Antwort
-            setTimeout(() => {
+            this.setTimeout(() => {
                 if (this.pendingWrites.has(seq)) {
                     this.pendingWrites.delete(seq);
                 }
@@ -788,7 +788,7 @@ class Mach extends utils.Adapter {
             this.ws.send(protocol.encodeSystemResetFrame(seq, this.sharedSecret));
             this.letzterReboot = Date.now();
             this.pendingWrites.set(seq, { id, oldValue: false, name: 'REBOOT', ts: Date.now() });
-            setTimeout(() => this.pendingWrites.delete(seq), 10_000);
+            this.setTimeout(() => this.pendingWrites.delete(seq), 10_000);
             this.log.info(`REBOOT -> SYSTEM_RESET gesendet (seq=0x${seq.toString(16).padStart(2, '0')})`);
         } catch (e) {
             this.log.error(`Neustart fehlgeschlagen: ${e.message}`);
@@ -796,10 +796,10 @@ class Mach extends utils.Adapter {
     }
 
     cleanupWebSocket() {
-        if (this.heartbeatTimer) { clearInterval(this.heartbeatTimer); this.heartbeatTimer = null; }
-        if (this.statsTimer) { clearInterval(this.statsTimer); this.statsTimer = null; }
-        if (this.getAllTimer) { clearInterval(this.getAllTimer); this.getAllTimer = null; }
-        if (this.getAllNachPushTimer) { clearTimeout(this.getAllNachPushTimer); this.getAllNachPushTimer = null; }
+        if (this.heartbeatTimer) { this.clearInterval(this.heartbeatTimer); this.heartbeatTimer = null; }
+        if (this.statsTimer) { this.clearInterval(this.statsTimer); this.statsTimer = null; }
+        if (this.getAllTimer) { this.clearInterval(this.getAllTimer); this.getAllTimer = null; }
+        if (this.getAllNachPushTimer) { this.clearTimeout(this.getAllNachPushTimer); this.getAllNachPushTimer = null; }
         this.l0Teile = [];
         if (this.ws) {
             try { this.ws.removeAllListeners(); } catch (_) {}
@@ -811,7 +811,7 @@ class Mach extends utils.Adapter {
 
     scheduleReconnect() {
         if (this.stopping || this.reconnectTimer) return;
-        this.reconnectTimer = setTimeout(() => {
+        this.reconnectTimer = this.setTimeout(() => {
             this.reconnectTimer = null;
             if (!this.stopping) this.connect();
         }, RECONNECT_DELAY_MS);
@@ -821,7 +821,7 @@ class Mach extends utils.Adapter {
         try {
             this.stopping = true;
             this.cleanupWebSocket();
-            if (this.reconnectTimer) { clearTimeout(this.reconnectTimer); this.reconnectTimer = null; }
+            if (this.reconnectTimer) { this.clearTimeout(this.reconnectTimer); this.reconnectTimer = null; }
             this.setStateAsync('info.connection', { val: false, ack: true }).catch(() => {});
             callback();
         } catch (_e) {

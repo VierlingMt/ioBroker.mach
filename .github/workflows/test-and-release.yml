@@ -18,9 +18,9 @@ jobs:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
     runs-on: ubuntu-latest
     steps:
-      - uses: ioBroker/testing-action-check@v1
+      - uses: ioBroker/testing-action-check@v2
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           lint: false
 
   adapter-tests:
@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: ioBroker/testing-action-adapter@v1
@@ -37,7 +37,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           os: ${{ matrix.os }}
 
-  # Veröffentlicht auf npm, sobald ein Tag v1.2.3 gepusht wird.
+  # Veröffentlicht auf npm, sobald ein Tag v1.2.3 gepusht wird – per
+  # Trusted Publishing (OIDC), ohne gespeicherten npm-Token.
   deploy:
     needs: [check-and-lint, adapter-tests]
     if: |
@@ -51,6 +52,5 @@ jobs:
     steps:
       - uses: ioBroker/testing-action-deploy@v1
         with:
-          node-version: '22.x'
-          npm-token: ${{ secrets.NPM_TOKEN }}
+          node-version: '24.x'
           github-token: ${{ secrets.GITHUB_TOKEN }}

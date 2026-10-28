@@ -17,7 +17,7 @@ app does over LTE, and makes the box values available in ioBroker.
 > the adapter. Use at your own risk – especially when switching devices
 > (heating!) remotely.
 
-*Deutsch: siehe [unten](#deutsch).*
+*A German summary is available in [docs/de/README.md](docs/de/README.md).*
 
 ## Features
 
@@ -48,14 +48,8 @@ does not offer it.
 
 ## Installation
 
-The adapter is not (yet) in the ioBroker repositories. Install it from
-GitHub:
-
-```bash
-iobroker url https://github.com/VierlingMt/ioBroker.mach
-```
-
-…or in Admin → Adapters → "Install from custom URL".
+Install the adapter from the ioBroker admin: Adapters → search for "mach".
+It is available there once it has been added to the ioBroker repositories.
 
 ## Configuration
 
@@ -100,6 +94,13 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 1.3.3 (2026-10-28)
+
+- Settings page translated into 11 languages, with responsive layout.
+- Timers are managed by ioBroker (`this.setTimeout`/`this.setInterval`).
+- Requires Node.js 22, js-controller 6.0.11 and admin 7.6.17.
+- Releases are published to npm via trusted publishing.
+
 ### 1.3.2 (2026-10-28)
 
 First public release. Earlier versions were developed and tested privately
@@ -136,33 +137,3 @@ text stays with it.
   user's own account and is not part of this project.
 
 See also [NOTICE](NOTICE).
-
----
-
-## Deutsch
-
-ioBroker-Adapter für Adria-Wohnwagen und -Reisemobile mit **MACH-Box**
-(Hersteller Solvesall d.o.o.). Er meldet sich mit deinem eigenen
-MACH-Account über die MACH-Cloud an, so wie die App über LTE.
-
-**Inoffiziell:** nicht von Adria oder Solvesall, nicht von ihnen unterstützt.
-Der Hersteller kann das Protokoll jederzeit ändern. Nutzung auf eigenes
-Risiko, besonders beim Schalten der Heizung aus der Ferne.
-
-- Liest **alle Werte** der Box: beim Verbinden, alle 15 Minuten und kurz
-  nach jeder Änderung. Benannt wie in der App unter `values.*`.
-- **Heizung** schalten (`named.Heizung_Schalter`) und Sollwert setzen
-  (`named.Heizung_Sollwert`). Andere Schalter noch nicht.
-- `control.reboot` startet die Box neu (höchstens alle 10 Minuten).
-- Voraussetzung: Box mit aktivem LTE, MACH-App-Account mit dem Fahrzeug.
-- Installation: `iobroker url https://github.com/VierlingMt/ioBroker.mach`
-- Konfiguration: E-Mail, Passwort und `machId` (App → Geräte-Einstellungen).
-- Für Automationen `info.lastAllValuesAt` prüfen: Sind die Daten älter als
-  ca. 30 Minuten, hat die Box vermutlich keine Verbindung.
-
-**Lizenz:** Der Adapter ist frei unter der [MIT-Lizenz](LICENSE): nutzen,
-kopieren, ändern, weitergeben, auch kommerziell. Sie gilt nur für den hier
-geschriebenen Code und die Doku. An der MACH-App, der Firmware der Box, dem
-MACH-Backend und deren Code, Daten und Marken hat der Autor **keine Rechte**;
-sie gehören Solvesall d.o.o. und Adria Mobil d.o.o. und werden hier nicht
-lizenziert. Dieses Repository enthält nichts davon.
