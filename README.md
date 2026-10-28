@@ -94,6 +94,12 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 1.3.5 (2026-10-28)
+
+- No functional changes. Releases are tagged by a push again, so every
+  release has a tag-triggered test run as the ioBroker repository check
+  expects.
+
 ### 1.3.4 (2026-10-28)
 
 - Settings page translations (`admin/i18n`) are now part of the npm package.

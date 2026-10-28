@@ -9,7 +9,9 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-**'
   pull_request: {}
   # Release per Knopfdruck (Actions → Test and Release → Run workflow):
-  # testet, veröffentlicht auf npm und legt Tag v<version> samt Release an.
+  # setzt nur den Tag v<version>. Der Tag-Push startet danach den normalen
+  # Lauf mit Tests, npm-Veröffentlichung und GitHub-Release – genau den
+  # Lauf, den der ioBroker-Repochecker beim Tag erwartet.
   workflow_dispatch:
     inputs:
       version:
@@ -23,7 +25,7 @@ concurrency:
 
 jobs:
   check-and-lint:
-    if: contains(github.event.head_commit.message, '[skip ci]') == false
+    if: github.event_name != 'workflow_dispatch' && contains(github.event.head_commit.message, '[skip ci]') == false
     runs-on: ubuntu-latest
     steps:
       - uses: ioBroker/testing-action-check@v2
@@ -32,7 +34,7 @@ jobs:
           lint: false
 
   adapter-tests:
-    if: contains(github.event.head_commit.message, '[skip ci]') == false
+    if: github.event_name != 'workflow_dispatch' && contains(github.event.head_commit.message, '[skip ci]') == false
     needs: [check-and-lint]
     runs-on: ${{ matrix.os }}
     strategy:
@@ -45,44 +47,53 @@ jobs:
           node-version: ${{ matrix.node-version }}
           os: ${{ matrix.os }}
 
-  # Veröffentlicht auf npm, sobald ein Tag v1.2.3 gepusht wird – per
-  # Trusted Publishing (OIDC), ohne gespeicherten npm-Token.
-  deploy:
-    needs: [check-and-lint, adapter-tests]
-    if: |
-      (github.event_name == 'push' &&
-       startsWith(github.ref, 'refs/tags/v') &&
-       contains(github.event.head_commit.message, '[skip ci]') == false) ||
-      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+  # Knopfdruck: Version prüfen und Tag setzen. Der Tag wird mit
+  # RELEASE_TOKEN gepusht – ein mit GITHUB_TOKEN gepushter Tag würde
+  # absichtlich keinen weiteren Workflow-Lauf auslösen.
+  create-tag:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
+      contents: read
     steps:
-      # Beim Start per Knopf: die eingegebene Version muss zu package.json
-      # passen und darf weder als Tag noch auf npm schon existieren.
-      - name: Check release version
-        if: github.event_name == 'workflow_dispatch'
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }}
+
+      - name: Check version and push tag
         env:
           VERSION: ${{ inputs.version }}
-          REPO: ${{ github.repository }}
-          REF: ${{ github.sha }}
         run: |
           set -euo pipefail
           [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "::error::Ungültige Version: $VERSION"; exit 1; }
-          PKG=$(curl -fsSL "https://raw.githubusercontent.com/$REPO/$REF/package.json" | jq -r .version)
-          [[ "$PKG" == "$VERSION" ]] || { echo "::error::package.json hat $PKG, nicht $VERSION"; exit 1; }
-          if git ls-remote --exit-code --tags "https://github.com/$REPO.git" "refs/tags/v$VERSION" >/dev/null; then
+          PKG=$(jq -r .version package.json)
+          IOP=$(jq -r .common.version io-package.json)
+          [[ "$PKG" == "$VERSION" && "$IOP" == "$VERSION" ]] || { echo "::error::package.json hat $PKG, io-package.json $IOP – erwartet $VERSION"; exit 1; }
+          grep -q "^### $VERSION " README.md || { echo "::error::README-Changelog hat keinen Eintrag für $VERSION"; exit 1; }
+          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
             echo "::error::Tag v$VERSION gibt es schon"; exit 1
           fi
           if curl -fsS -o /dev/null "https://registry.npmjs.org/iobroker.mach/$VERSION"; then
             echo "::error::Version $VERSION ist schon auf npm"; exit 1
           fi
-          echo "Version $VERSION ok"
+          git tag "v$VERSION"
+          git push origin "v$VERSION"
+          echo "Tag v$VERSION gesetzt – der Tag-Lauf veröffentlicht jetzt."
 
+  # Veröffentlicht auf npm, sobald ein Tag v1.2.3 gepusht wird – per
+  # Trusted Publishing (OIDC), ohne gespeicherten npm-Token.
+  deploy:
+    needs: [check-and-lint, adapter-tests]
+    if: |
+      contains(github.event.head_commit.message, '[skip ci]') == false &&
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
       - uses: ioBroker/testing-action-deploy@v1
         with:
           node-version: '24.x'
-          # Bei Start per Knopf: legt Tag v<version> und das Release an.
-          tag: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
