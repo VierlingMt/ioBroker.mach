@@ -21,6 +21,22 @@ const GET_ALL_MIN_ABSTAND_MS = 60_000;
 // Werte, die nicht in ioBroker-States gehoeren: wer ioBroker lesen darf,
 // soll damit nicht per Bluetooth an die Box kommen oder SIM/Modem
 // identifizieren koennen.
+/**
+ * Rolle passend zum State: switch.* und level.* stehen in ioBroker fuer
+ * schaltbare States. Nur lesbare Werte (z. B. Licht, Kuehlschrank - Schreiben
+ * ist dort noch nicht freigegeben) bekommen deshalb eine Anzeige-Rolle,
+ * "indicator" nur fuer Wahr/Falsch.
+ */
+function passendeRolle(role, type, writable) {
+    if (!writable) {
+        if (role.startsWith('switch')) return type === 'boolean' ? 'indicator' : 'value';
+        if (role === 'level.temperature') return 'value.temperature';
+        if (role.startsWith('level')) return 'value';
+    }
+    if (role.startsWith('indicator') && type !== 'boolean') return 'value';
+    return role;
+}
+
 const VERTRAULICH = new Set([
     'SYSTEM_BLE_PIN', 'SYSTEM_BLE_PIN_DEFAULT',
     'LTE_EMBEDDED_SIM_ICCID', 'LTE_INSERTED_SIM_ICCID', 'LTE_SIM_ID_VALUE', 'LTE_MODEM_IMEI',
@@ -138,18 +154,25 @@ class Mach extends utils.Adapter {
      */
     async _ensureObject(idRel, meta, isWritable = false) {
         if (this.ensuredObjects.has(idRel)) return;
+        const role = passendeRolle(meta.role || 'value', meta.type || 'number', isWritable);
         await this.setObjectNotExistsAsync(idRel, {
             type: 'state',
             common: {
                 name: meta.name || idRel,
                 type: meta.type || 'number',
-                role: meta.role || 'value',
+                role,
                 unit: meta.unit,
                 read: true,
                 write: isWritable,
             },
             native: {},
         });
+        // Bestehende Installationen: Rolle aus aelteren Versionen nachziehen,
+        // ohne das Objekt neu anzulegen.
+        const obj = await this.getObjectAsync(idRel);
+        if (obj && obj.common && obj.common.role !== role) {
+            await this.extendObjectAsync(idRel, { common: { role } });
+        }
         // Default-Wert nur setzen falls State noch keinen Wert hat. Damit
         // ueberschreiben wir keine echten Werte aus persistierter Datenbank.
         try {

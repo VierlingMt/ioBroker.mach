@@ -94,6 +94,12 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 1.3.6 (2026-10-28)
+
+- Read-only states no longer use `switch.*` or `level.*` roles: on/off values
+  are `indicator`, temperatures `value.temperature`, everything else `value`.
+  Objects created by older versions are updated on the next start.
+
 ### 1.3.5 (2026-10-28)
 
 - No functional changes. Releases are tagged by a push again, so every
