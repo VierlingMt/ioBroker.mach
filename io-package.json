@@ -1,0 +1,167 @@
+{
+  "common": {
+    "name": "mach",
+    "version": "1.3.2",
+    "news": {
+      "1.3.2": {
+        "en": "Removed an unused device list copied from a single box (opcode 0x08) so it can never be sent to another box. No functional change.",
+        "de": "Eine ungenutzte, von einer einzelnen Box stammende Geräteliste (opcode 0x08) entfernt, damit sie nie an eine andere Box gehen kann. Keine Funktionsänderung."
+      },
+      "1.3.1": {
+        "en": "Confidential values (Bluetooth PIN, SIM ICCID/IMSI, modem IMEI) are no longer written to values.*.",
+        "de": "Vertrauliche Werte (Bluetooth-PIN, SIM-ICCID/IMSI, Modem-IMEI) werden nicht mehr unter values.* abgelegt."
+      },
+      "1.3.0": {
+        "en": "Values with names: the adapter builds the app's value table from get-drivers-json and writes every known value once as values.<NAME> with its real value (text, number with divisor, category). Unknown values are stored only once as tlv.*, no longer additionally as frames.*. named.* stays. After a push the full state follows within 5-60 s.",
+        "de": "Werte mit Namen: der Adapter baut aus get-drivers-json die Wertetabelle der App und legt jeden bekannten Wert einmal als values.<NAME> mit echtem Wert ab (Text, Zahl mit Teiler, Auswahl). Unbekannte Werte nur noch einmal als tlv.*, nicht mehr zusätzlich als frames.*. named.* bleibt. Nach einer Push-Meldung folgt der Gesamtstand binnen 5-60 s."
+      },
+      "1.2.1": {
+        "en": "The full state from the box is read: the value list also contains texts longer than 8 bytes and empty entries, which the parser rejected in 1.2.0.",
+        "de": "Der Gesamtstand der Box wird gelesen: die Werteliste enthält auch Texte über 8 Byte und leere Einträge, an denen der Parser in 1.2.0 scheiterte."
+      },
+      "1.2.0": {
+        "en": "Commands are accepted by the box: the L1 check byte before FE FF is now the CRC-8 the app sends (was fixed 0x00, so the box answered every command with INCORRECT_CRC). New: full state via GET_ALL_DEVICE_VALUES on connect and every 15 min (info.lastAllValuesAt), multi-part messages are reassembled, SET_DETECTED_DEVICES removed from the handshake.",
+        "de": "Die Box nimmt Kommandos an: das L1-Prüfbyte vor FE FF ist jetzt das CRC-8 wie in der App (war fest 0x00, die Box antwortete auf jedes Kommando mit INCORRECT_CRC). Neu: Gesamtstand per GET_ALL_DEVICE_VALUES beim Verbinden und alle 15 min (info.lastAllValuesAt), mehrteilige Nachrichten werden zusammengesetzt, SET_DETECTED_DEVICES aus dem Handshake entfernt."
+      },
+      "1.1.0": {
+        "en": "New button control.reboot restarts the MACH box like \"Restart MACH\" in the app (SYSTEM_RESET, opcode 0x09). At most once per 10 min; only works while the box still responds.",
+        "de": "Neuer Button control.reboot startet die MACH-Box neu wie „MACH neu starten\" in der App (SYSTEM_RESET, opcode 0x09). Höchstens einmal je 10 min; wirkt nur, solange die Box noch antwortet."
+      }
+    },
+    "title": "MACH (Adria)",
+    "titleLang": {
+      "en": "MACH (Adria)",
+      "de": "MACH (Adria)",
+      "ru": "MACH (Adria)",
+      "pt": "MACH (Adria)",
+      "nl": "MACH (Adria)",
+      "fr": "MACH (Adria)",
+      "it": "MACH (Adria)",
+      "es": "MACH (Adria)",
+      "pl": "MACH (Adria)",
+      "uk": "MACH (Adria)",
+      "zh-cn": "MACH (Adria)"
+    },
+    "desc": {
+      "en": "ioBroker adapter for Adria caravans with the MACH control box (Solvesall): reads all values via the MACH cloud, heating can be switched. Unofficial, not affiliated with Adria or Solvesall.",
+      "de": "ioBroker-Adapter für Adria-Wohnwagen mit MACH-Steuerbox (Solvesall): liest alle Werte über die MACH-Cloud, die Heizung lässt sich schalten. Inoffiziell, nicht verbunden mit Adria oder Solvesall.",
+      "ru": "Адаптер ioBroker для караванов Adria с блоком управления MACH.",
+      "pt": "Adaptador ioBroker para caravanas Adria equipadas com a caixa de controle MACH.",
+      "nl": "ioBroker-adapter voor Adria-caravans met de MACH-besturingsbox.",
+      "fr": "Adaptateur ioBroker pour caravanes Adria equipees du boitier MACH.",
+      "it": "Adattatore ioBroker per caravan Adria con centralina MACH.",
+      "es": "Adaptador ioBroker para caravanas Adria con la caja de control MACH.",
+      "pl": "Adapter ioBroker do karawanow Adria wyposazonych w sterownik MACH.",
+      "uk": "Адаптер ioBroker для караванів Adria з блоком керування MACH.",
+      "zh-cn": "适用于配备 MACH 控制盒的 Adria 房车的 ioBroker 适配器。"
+    },
+    "authors": [
+      "Martin Vierling <noreply@users.noreply.github.com>"
+    ],
+    "keywords": [
+      "adria",
+      "mach",
+      "caravan",
+      "wohnwagen",
+      "rv",
+      "solvesall"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "mach.png",
+    "extIcon": "https://raw.githubusercontent.com/VierlingMt/ioBroker.mach/main/admin/mach.png",
+    "readme": "https://github.com/VierlingMt/ioBroker.mach/blob/main/README.md",
+    "type": "vehicle",
+    "mode": "daemon",
+    "enabled": false,
+    "loglevel": "info",
+    "compact": true,
+    "messagebox": true,
+    "connectionType": "cloud",
+    "dataSource": "push",
+    "tier": 3,
+    "encryptedNative": [
+      "password"
+    ],
+    "protectedNative": [
+      "password"
+    ],
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.0"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.0.0"
+      }
+    ]
+  },
+  "native": {
+    "username": "",
+    "password": "",
+    "machId": ""
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.lastFrameAt",
+      "type": "state",
+      "common": {
+        "role": "value.time",
+        "name": "Timestamp of last decoded frame from box (ms epoch)",
+        "type": "number",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.lastAllValuesAt",
+      "type": "state",
+      "common": {
+        "role": "value.time",
+        "name": "Timestamp of last full state from box (GET_ALL_DEVICE_VALUES, ms epoch)",
+        "type": "number",
+        "read": true,
+        "write": false,
+        "def": 0
+      },
+      "native": {}
+    },
+    {
+      "_id": "named",
+      "type": "channel",
+      "common": {
+        "name": "Named (decoded) sensor states"
+      },
+      "native": {}
+    }
+  ]
+}

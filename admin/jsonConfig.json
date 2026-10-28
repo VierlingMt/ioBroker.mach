@@ -1,0 +1,55 @@
+{
+  "i18n": true,
+  "type": "tabs",
+  "items": {
+    "options": {
+      "type": "panel",
+      "label": "Settings",
+      "items": {
+        "_header": {
+          "type": "header",
+          "text": "MACH-Backend-Zugang",
+          "size": 4,
+          "newLine": true
+        },
+        "_hint": {
+          "type": "staticText",
+          "text": "Trage hier die Anmeldedaten deiner MACH-App ein. Die machId steht in der App unter Geräte-Einstellungen (12 Hex-Zeichen, z. B. A1B2C3D4E5F6).",
+          "newLine": true
+        },
+        "username": {
+          "type": "text",
+          "label": "Username (E-Mail)",
+          "newLine": true,
+          "sm": 12,
+          "md": 6,
+          "lg": 5,
+          "default": ""
+        },
+        "password": {
+          "type": "password",
+          "label": "Password",
+          "repeat": false,
+          "sm": 12,
+          "md": 6,
+          "lg": 5,
+          "default": ""
+        },
+        "machId": {
+          "type": "text",
+          "label": "machId (12 Hex-Zeichen)",
+          "newLine": true,
+          "sm": 12,
+          "md": 6,
+          "lg": 4,
+          "default": ""
+        },
+        "_status": {
+          "type": "staticText",
+          "text": "Liest alle Werte der Box (values.*), beim Verbinden, alle 15 Minuten und kurz nach jeder Änderung. Schreiben: Heizung an/aus (named.Heizung_Schalter) und Sollwert (named.Heizung_Sollwert). Inoffizieller Adapter, nicht von Adria oder Solvesall.",
+          "newLine": true
+        }
+      }
+    }
+  }
+}

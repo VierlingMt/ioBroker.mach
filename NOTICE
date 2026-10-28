@@ -1,0 +1,26 @@
+ioBroker.mach
+Copyright (c) 2026 Martin Vierling
+Licensed under the MIT License (see LICENSE).
+
+Scope of this license
+---------------------
+The MIT License applies only to the code and documentation written for
+this repository (adapter code, protocol description, logo).
+
+The author does not own, and this project does not license, the MACH app,
+the firmware of the MACH box, the MACH backend, or any code, data or
+trademarks belonging to Solvesall d.o.o. or Adria Mobil d.o.o. No such
+code, files or data are included in this repository.
+
+"Adria" and "MACH" are names of their respective owners and are used only
+to describe what the adapter works with. This is an unofficial project; it
+is not made, endorsed or supported by Adria Mobil or Solvesall.
+
+Umfang der Lizenz (Deutsch)
+---------------------------
+Die MIT-Lizenz gilt nur für den Code und die Doku, die für dieses
+Repository geschrieben wurden. An der MACH-App, der Firmware der Box, dem
+MACH-Backend sowie an Code, Daten und Marken von Solvesall d.o.o. oder
+Adria Mobil d.o.o. hat der Autor keine Rechte; sie werden hier nicht
+lizenziert und sind in diesem Repository nicht enthalten. Inoffizielles
+Projekt, nicht von Adria Mobil oder Solvesall.
