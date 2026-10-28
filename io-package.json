@@ -80,12 +80,6 @@
     "connectionType": "cloud",
     "dataSource": "push",
     "tier": 3,
-    "encryptedNative": [
-      "password"
-    ],
-    "protectedNative": [
-      "password"
-    ],
     "adminUI": {
       "config": "json"
     },
@@ -104,6 +98,12 @@
       "license": "MIT"
     }
   },
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
   "native": {
     "username": "",
     "password": "",
