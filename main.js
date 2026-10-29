@@ -81,6 +81,17 @@ class Mach extends utils.Adapter {
     async onReady() {
         await this.setStateAsync('info.connection', { val: false, ack: true });
 
+        // Ordner auch fuer States aus aelteren Versionen anlegen, die keine
+        // Werte mehr bekommen (z. B. frames.*) - sonst fehlen sie dauerhaft.
+        try {
+            const objekte = await this.getAdapterObjectsAsync();
+            for (const [id, obj] of Object.entries(objekte)) {
+                if (obj && obj.type === 'state') await this._ensureParents(id.slice(this.namespace.length + 1));
+            }
+        } catch (e) {
+            this.log.warn(`Ordner fuer vorhandene States nicht angelegt: ${e.message}`);
+        }
+
         const { username, password, machId } = this.config;
         if (!username || !password || !machId) {
             this.log.error('Konfiguration unvollstaendig: bitte username, password und machId in der Adapter-Konfiguration eintragen.');
