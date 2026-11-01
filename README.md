@@ -91,6 +91,14 @@ within 20 s, the state returns to the last value of the box.
   `MY_VALUE, LIGHT_*`. Only works for values with a known type.
 - **Never writable**: your own blocklist, e.g. `POWER_CONTROL_*`.
 
+Parts that **move or trigger something** are only writable when you add
+their name to "Additionally writable" yourself – the setting "setup" is not
+enough: slide-outs, awnings, lifts (bed, TV, bike, garage), steps, roof,
+satellite antenna, winch, front blind, doors, drain valves, central locking
+and generator. Switching them remotely without seeing them can harm people
+or the vehicle. Most caravans do not have them; the value table contains
+them for motorhomes and trailers.
+
 Some values can **never** be written, whatever the settings: LTE on/off,
 all SIM settings (slot, APN, user, password, PIN), the Bluetooth PIN,
 bootloader/application mode and debug switches. A wrong value there can cut
@@ -145,7 +153,8 @@ Existing objects are converted on the next start.
 - Writing every value the box allows (see "Writing values"), generic from
   the value table: selections, numbers, texts, actions.
 - Write access setting (off / operation / setup) plus own allow and block
-  lists; values that could cut the connection are always blocked.
+  lists; values that could cut the connection are always blocked; moving
+  parts, valves, locks and generator need an explicit own allow entry.
 - Commands are queued, checked against range/step/selection and confirmed by
   asking the box for the value (GET_DEVICE_VALUE_FOR_VALUEID).
 - Values from push messages go to `values.*` right away.

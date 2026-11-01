@@ -44,6 +44,13 @@ assert.equal(w.istSchreibbar(innen, cfg('bedienung')), false);       // laut Tab
 assert.equal(w.istSchreibbar(innen, cfg('bedienung', 'LIVING_*')), true); // eigene Freigabe
 assert.equal(w.istSchreibbar(heizung, cfg('bedienung', '', 'AIR_HEATER_*')), false); // eigene Sperre
 
+// Bewegliche Teile, Ventile, Schloesser, Generator: nur mit eigener Freigabe
+const markise = { id: 900, name: 'UTILITIES_AWNING_VALUE', typ: 'categorical', categories: ['off', 'on'], writable: true, hasState: true };
+const ventil = { id: 901, name: 'DRAIN_VALVE_GREY_WATER', typ: 'categorical', categories: ['close', 'open'], writable: true, hasState: true };
+assert.equal(w.istSchreibbar(markise, cfg('einrichtung')), false);
+assert.equal(w.istSchreibbar(ventil, cfg('bedienung')), false);
+assert.equal(w.istSchreibbar(markise, cfg('bedienung', 'UTILITIES_AWNING_VALUE')), true);
+
 // Darstellung in ioBroker
 assert.deepEqual(w.objektDefinition(heizung, true), { name: 'AIR_HEATER_VALUE', read: true, write: true, type: 'boolean', role: 'switch' });
 assert.equal(w.objektDefinition(heizung, false).role, 'indicator');
