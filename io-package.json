@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mach",
-    "version": "2.0.0-beta.0",
+    "version": "2.0.0-beta.1",
     "news": {
+      "2.0.0-beta.1": {
+        "en": "While a command is pending, an outdated report from the box no longer resets the value; the adapter asks again and only takes a different value of the box after the deadline.",
+        "de": "Solange ein Befehl aussteht, setzt eine veraltete Meldung der Box den Wert nicht mehr zurück; der Adapter fragt nach und übernimmt einen abweichenden Wert erst nach Ablauf der Frist.",
+        "ru": "Пока команда выполняется, устаревшее сообщение блока больше не сбрасывает значение; адаптер переспрашивает и принимает иное значение только по истечении срока.",
+        "pt": "Enquanto um comando está pendente, uma mensagem desatualizada da caixa já não repõe o valor; o adaptador pergunta de novo e só aceita outro valor após o prazo.",
+        "nl": "Zolang een opdracht loopt, zet een verouderde melding van de box de waarde niet meer terug; de adapter vraagt opnieuw en neemt een afwijkende waarde pas na de termijn over.",
+        "fr": "Tant qu'une commande est en attente, un message obsolète du boîtier ne réinitialise plus la valeur ; l'adaptateur redemande et n'accepte une valeur différente qu'après le délai.",
+        "it": "Finché un comando è in sospeso, un messaggio superato della centralina non reimposta più il valore; l'adattatore richiede e accetta un valore diverso solo dopo la scadenza.",
+        "es": "Mientras un comando está pendiente, un mensaje antiguo de la caja ya no restablece el valor; el adaptador vuelve a preguntar y solo acepta otro valor tras el plazo.",
+        "pl": "Gdy polecenie oczekuje, nieaktualny komunikat skrzynki nie przywraca już wartości; adapter pyta ponownie i przyjmuje inną wartość dopiero po upływie terminu.",
+        "uk": "Поки команда очікує, застаріле повідомлення блока більше не скидає значення; адаптер перепитує й приймає інше значення лише після закінчення терміну.",
+        "zh-cn": "命令待处理时，设备的过时消息不再重置数值；适配器会再次查询，仅在期限后才采用不同的数值。"
+      },
       "2.0.0-beta.0": {
         "en": "Beta: every value the box allows can be switched (heating, A/C, fridge, boiler, pump, lights, scenes …). Breaking: on/off values are boolean, selections are numbers with states.",
         "de": "Beta: alles, was die Box erlaubt, ist schaltbar (Heizung, Klima, Kühlschrank, Boiler, Pumpe, Licht, Szenen …). Achtung: An/Aus-Werte sind boolean, Auswahlen Zahlen mit states.",

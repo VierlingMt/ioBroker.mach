@@ -759,6 +759,10 @@ class Mach extends utils.Adapter {
     async setzeWert(e, wert) {
         const id = `values.${e.name}`;
         await this.definiereWert(e);
+        // Waehrend ein Befehl aussteht: ein abweichender Wert ist oft nur die
+        // alte Meldung, die kurz nach dem Befehl noch eintrifft. Dann nicht
+        // zurueckspringen, sondern bis zur Frist warten und nachfragen.
+        if (this.wartetAufBox(e, wert)) return;
         this.bestaetige(e, wert);
         const key = `val:${e.name}`;
         if (this.lastValues.has(key) && this.lastValues.get(key) === wert) return;
@@ -973,17 +977,26 @@ class Mach extends utils.Adapter {
         }
     }
 
+    /** true, wenn ein Befehl aussteht und die Box (noch) etwas anderes meldet. */
+    wartetAufBox(e, wert) {
+        const offen = this.ausstehend.get(e.name);
+        if (!offen || offen.ziel === undefined || offen.ziel === wert) return false;
+        offen.letzterBoxWert = wert;
+        this.lastValues.set(`val:${e.name}`, wert);
+        if (!offen.nachgefragt) {
+            offen.nachgefragt = true;
+            this.setTimeout(() => this.frageWert(e), 3_000);
+        }
+        return true;
+    }
+
     /** Die Box hat einen Wert gemeldet: ausstehendes Schreiben abschliessen. */
     bestaetige(e, wert) {
         const offen = this.ausstehend.get(e.name);
         if (!offen) return;
         this.clearTimeout(offen.timer);
         this.ausstehend.delete(e.name);
-        if (offen.ziel !== undefined && offen.ziel !== wert) {
-            this.log.warn(`${e.name}: Box meldet ${wert} statt ${offen.ziel}`);
-        } else {
-            this.log.info(`${e.name}: Box bestaetigt ${wert}`);
-        }
+        this.log.info(`${e.name}: Box bestaetigt ${wert}`);
         // Weitere States (z. B. named.Heizung_Schalter) auf den Wert der Box.
         for (const id of offen.ids) {
             if (id === `values.${e.name}`) continue;
@@ -997,7 +1010,13 @@ class Mach extends utils.Adapter {
         if (!offen) return;
         this.clearTimeout(offen.timer);
         this.ausstehend.delete(name);
-        this.log.warn(`${name}: ${grund} - zurueck auf den letzten Wert der Box`);
+        if (offen.letzterBoxWert !== undefined) {
+            this.log.warn(`${name}: Box meldet ${offen.letzterBoxWert} statt ${offen.ziel} - uebernommen`);
+            const id = `values.${name}`;
+            await this.setStateAsync(id, { val: offen.letzterBoxWert, ack: true }).catch(() => {});
+        } else {
+            this.log.warn(`${name}: ${grund} - zurueck auf den letzten Wert der Box`);
+        }
         const e = this.katalogNachName.get(name);
         for (const id of offen.ids) await this.zurueckAufLetztenWert(id, e);
     }

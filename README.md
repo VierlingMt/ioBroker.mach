@@ -143,6 +143,15 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 2.0.0-beta.1 (2026-11-01)
+
+- While a write is pending, a different value reported by the box (often
+  the old value arriving right after the command) no longer resets the
+  state. The adapter asks again after 3 s and only takes the box's value
+  with a warning when the 20 s deadline passes.
+- Note: some boxes report the external light brightness scaled
+  (60 % of the value sent); the state then shows what the box reports.
+
 ### 2.0.0-beta.0 (2026-11-01)
 
 **Breaking:** on/off values under `values.*` are now `boolean` (was text
