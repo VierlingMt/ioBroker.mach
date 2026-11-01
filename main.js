@@ -5,6 +5,7 @@ const WebSocket = require('ws');
 
 const protocol = require('./lib/protocol');
 const { FRAME_NAMES, TLV_NAMES, WRITE_NAMES } = require('./lib/mappings');
+const werte = require('./lib/werte');
 
 const HEARTBEAT_INTERVAL_MS = 10_000;
 const RECONNECT_DELAY_MS = 15_000;
@@ -18,6 +19,11 @@ const GET_ALL_INTERVAL_MS = 15 * 60 * 1000;
 // nicht bis zum naechsten Intervall hinterherhaengt - hoechstens 1x/min.
 const GET_ALL_NACH_PUSH_MS = 5_000;
 const GET_ALL_MIN_ABSTAND_MS = 60_000;
+// Schreiben: Abstand zwischen zwei Befehlen, Nachfrage nach dem OK der Box
+// und Frist, bis die Box den neuen Wert gemeldet haben muss.
+const SCHREIB_ABSTAND_MS = 300;
+const NACHFRAGE_NACH_MS = 700;
+const BESTAETIGUNG_FRIST_MS = 20_000;
 // Werte, die nicht in ioBroker-States gehoeren: wer ioBroker lesen darf,
 // soll damit nicht per Bluetooth an die Box kommen oder SIM/Modem
 // identifizieren koennen.
@@ -71,6 +77,13 @@ class Mach extends utils.Adapter {
         this.getAllNachPushTimer = null;
         this.letzterGetAll = 0;
         this.valueCatalog = null;       // Map<valueId, {name, typ, ...}> aus get-drivers-json
+        this.katalogNachName = new Map(); // Name -> Eintrag der Wertetabelle
+        this.schreibCfg = { stufe: 'bedienung', freigaben: [], sperren: [] };
+        this.schreibQueue = [];
+        this.schreibLaeuft = false;
+        this.ausstehend = new Map();    // Name -> {ziel, ids, timer} bis die Box den Wert meldet
+        this.knoepfe = new Map();       // values.<NAME>_<AKTION> -> {e, index}
+        this.werteDefiniert = new Map(); // values.<NAME> -> JSON der zuletzt gesetzten Definition
         this.l0Teile = [];             // Teilstuecke einer mehrteiligen L0-Nachricht
 
         this.on('ready', this.onReady.bind(this));
@@ -98,7 +111,15 @@ class Mach extends utils.Adapter {
             return;
         }
 
-        this.subscribeStates('*');   // Schreib-Pfad ab v0.2.0 aktiv (Heizung)
+        const stufe = werte.STUFEN.includes(this.config.schreiben) ? this.config.schreiben : 'bedienung';
+        this.schreibCfg = {
+            stufe,
+            freigaben: werte.eigeneListe(this.config.eigeneFreigaben),
+            sperren: werte.eigeneListe(this.config.eigeneSperren),
+        };
+        this.log.info(`Schreibzugriff: ${stufe}${this.config.eigeneFreigaben ? `, eigene Freigaben: ${this.config.eigeneFreigaben}` : ''}${this.config.eigeneSperren ? `, eigene Sperren: ${this.config.eigeneSperren}` : ''}`);
+
+        this.subscribeStates('*');
         // machId und Benutzer nur gekuerzt: Logs landen oft in Foren.
         this.log.info(`mach adapter ready – machId=${String(machId).slice(0, 4)}…, user=${String(username).replace(/^(.).*@/, '$1…@')}`);
         await this.precreateKnownStates();
@@ -361,6 +382,7 @@ class Mach extends utils.Adapter {
                 // info.lastFrameAt fuer Staleness-Tracking
                 this.setStateAsync('info.lastFrameAt', { val: Date.now(), ack: true }).catch(() => {});
                 await this.applyDecodedFrame(decoded);
+                await this.applyPushWerte(plain);
                 this.getAllNachPush();
             } catch (e) {
                 if (!this.stopping) this.log.warn(`WS msg error: ${e.message}`);
@@ -600,7 +622,9 @@ class Mach extends utils.Adapter {
             this.valueCatalog = null;
             this.log.warn(`Wertetabelle nicht lesbar: ${e.message}`);
         }
+        this.katalogNachName = new Map();
         if (this.valueCatalog) {
+            for (const e of this.valueCatalog.values()) this.katalogNachName.set(e.name, e);
             this.log.info(`Wertetabelle: ${this.valueCatalog.size} Werte bekannt (get-drivers-json)`);
         } else {
             const felder = auth.driversResponse && typeof auth.driversResponse === 'object'
@@ -649,6 +673,9 @@ class Mach extends utils.Adapter {
         const name = protocol.statusName(protocol.L2_STATUS, antwort.status);
         if (antwort.opcode === 0x05 && ok) {
             await this.applyAllValues(antwort.payload);
+        } else if (antwort.opcode === 0x06 && ok) {
+            const liste = protocol.parseValueList(antwort.payload);
+            if (liste) await this.applyValueEntries(liste, { legacy: true });
         } else {
             this.log.debug(`Box L2-Antwort: msgId=0x${antwort.msgId.toString(16)} opcode=0x${antwort.opcode.toString(16)} status=${name}`);
         }
@@ -660,6 +687,18 @@ class Mach extends utils.Adapter {
         const pending = this.pendingWrites.get(seq);
         if (!pending) return;
         this.pendingWrites.delete(seq);
+        if (pending.art === 'GET') return;
+        if (pending.art === 'SET') {
+            if (ok) {
+                this.log.info(`${pending.name}: Box OK (seq=0x${seq.toString(16).padStart(2, '0')})`);
+                // Gleich nachfragen, statt auf Push oder Gesamtstand zu warten.
+                if (pending.e) this.setTimeout(() => this.frageWert(pending.e), NACHFRAGE_NACH_MS);
+            } else {
+                this.log.warn(`${pending.name}: Box lehnt ab (${grund})`);
+                await this.zuruecknehmen(pending.name, `Box lehnt ab (${grund})`);
+            }
+            return;
+        }
         if (ok) {
             this.log.info(`${pending.name}: Box OK (seq=0x${seq.toString(16).padStart(2, '0')})`);
             return;
@@ -683,32 +722,84 @@ class Mach extends utils.Adapter {
             this.log.warn(`GET_ALL-Antwort nicht lesbar (${payload.length} B): ${payload.subarray(0, 32).toString('hex')}...`);
             return;
         }
+        const { benannt, roh } = await this.applyValueEntries(eintraege, { legacy: true });
+        await this.setStateAsync('info.lastAllValuesAt', { val: Date.now(), ack: true }).catch(() => {});
+        this.log.info(`Gesamtstand von der Box: ${eintraege.length} Werte (${benannt} benannt, ${roh} roh)`);
+    }
+
+    /**
+     * Eintraege einer Werteliste (Gesamtstand, Einzelabfrage oder Push)
+     * uebernehmen: bekannte Werte nach values.<NAME>, unbekannte roh nach
+     * tlv.*. legacy: zusaetzlich die alten named.*-States fuehren (bei Push
+     * erledigt das schon applyDecodedFrame).
+     */
+    async applyValueEntries(eintraege, { legacy }) {
         let benannt = 0, roh = 0;
         for (const tlv of eintraege) {
             if (tlv.valBytes.length === 0) continue;
             // Bisherige named.*-States weiterfuehren (Skripte haengen daran).
             const frame = protocol.valueEntryAsFrame(tlv);
-            if (tlv.valBytes.length <= 8 && FRAME_NAMES[frame.outerIdHex]) await this.applyDecodedFrame(frame);
+            if (legacy && tlv.valBytes.length <= 8 && FRAME_NAMES[frame.outerIdHex]) await this.applyDecodedFrame(frame);
             // Jeder Wert genau einmal: bekannt -> values.<NAME>, sonst roh tlv.*.
             const eintrag = this.valueCatalog && this.valueCatalog.get(parseInt(tlv.idHex.slice(0, 4), 16));
             if (eintrag && VERTRAULICH.has(eintrag.name)) continue;
-            const wert = eintrag && protocol.decodeCatalogValue(eintrag, tlv.valBytes);
-            if (wert) {
+            const wert = eintrag ? werte.zustandsWert(eintrag, protocol.decodeCatalogValue(eintrag, tlv.valBytes)) : undefined;
+            if (wert !== undefined) {
                 benannt++;
-                const key = `val:${eintrag.name}`;
-                if (this.lastValues.get(key) === wert.value) continue;
-                this.lastValues.set(key, wert.value);
-                await this.upsertGeneric(`values.${eintrag.name}`, wert.value, {
-                    type: wert.type, role: wert.type === 'number' ? 'value' : 'text', name: eintrag.name,
-                    unit: eintrag.unit || undefined,
-                });
-            } else {
+                await this.setzeWert(eintrag, wert);
+            } else if (legacy) {
                 roh++;
                 await this.applyDecodedFrame({ format: 'GET_ALL', outerIdHex: '', tlvs: [tlv] });
             }
         }
-        await this.setStateAsync('info.lastAllValuesAt', { val: Date.now(), ack: true }).catch(() => {});
-        this.log.info(`Gesamtstand von der Box: ${eintraege.length} Werte (${benannt} benannt, ${roh} roh)`);
+        return { benannt, roh };
+    }
+
+    /** values.<NAME> anlegen/anpassen und Wert der Box setzen (ack). */
+    async setzeWert(e, wert) {
+        const id = `values.${e.name}`;
+        await this.definiereWert(e);
+        this.bestaetige(e, wert);
+        const key = `val:${e.name}`;
+        if (this.lastValues.has(key) && this.lastValues.get(key) === wert) return;
+        this.lastValues.set(key, wert);
+        await this.setStateAsync(id, { val: wert, ack: true });
+    }
+
+    /**
+     * Objekt values.<NAME> passend zur Wertetabelle (Typ, Rolle, Auswahl,
+     * Grenzen, schreibbar). Bestehende Objekte aus aelteren Versionen werden
+     * angepasst statt neu angelegt; Aktionen bekommen Knoepfe.
+     */
+    async definiereWert(e) {
+        const id = `values.${e.name}`;
+        const schreibbar = werte.istSchreibbar(e, this.schreibCfg);
+        const common = werte.objektDefinition(e, schreibbar);
+        const sig = JSON.stringify(common);
+        if (this.werteDefiniert.get(id) === sig) return;
+        await this._ensureParents(id);
+        await this.setObjectNotExistsAsync(id, { type: 'state', common, native: {} });
+        const obj = await this.getObjectAsync(id);
+        const alt = obj && obj.common ? obj.common : {};
+        const felder = ['type', 'role', 'write', 'unit', 'min', 'max', 'step'];
+        const anders = felder.some((f) => alt[f] !== common[f])
+            || JSON.stringify(alt.states || null) !== JSON.stringify(common.states || null);
+        if (anders) {
+            const neu = { ...common };
+            for (const f of [...felder, 'states']) if (!(f in neu) && f in alt) neu[f] = null;
+            await this.extendObjectAsync(id, { common: neu });
+            if (alt.type && alt.type !== common.type) this.lastValues.delete(`val:${e.name}`);
+        }
+        this.werteDefiniert.set(id, sig);
+        this.ensuredObjects.add(id);
+
+        if (schreibbar && werte.istAktion(e)) {
+            for (const k of werte.aktionsKnoepfe(e)) {
+                const kid = `values.${e.name}_${k.suffix}`;
+                await this.setObjectNotExistsAsync(kid, { type: 'state', common: k.common, native: {} });
+                this.knoepfe.set(kid, { e, index: k.index });
+            }
+        }
     }
 
     /**
@@ -771,54 +862,191 @@ class Mach extends utils.Adapter {
             if (state.val) await this.sendeReboot(id);
             return;
         }
-        // id ist absolut: mach.0.named.Heizung_Schalter
-        const m = id.match(/\.named\.(.+)$/);
-        if (!m) return;
-        const name = m[1];
-        const cfg = WRITE_NAMES[name];
-        if (!cfg) {
-            this.log.warn(`State ${id} ist nicht writable (kein WRITE_NAMES-Eintrag).`);
+        const rel = id.slice(this.namespace.length + 1);
+
+        // Knopf einer Aktion (z. B. values.LIGHT_SYSTEM_MEMORY_1_SAVE)
+        const knopf = this.knoepfe.get(rel);
+        if (knopf) {
+            await this.setStateAsync(rel, { val: false, ack: true }).catch(() => {});
+            if (!state.val) return;
+            if (!werte.istSchreibbar(knopf.e, this.schreibCfg)) {
+                this.log.warn(`${rel}: Schreiben ist fuer ${knopf.e.name} nicht freigegeben.`);
+                return;
+            }
+            this.planeSchreiben(knopf.e, knopf.index, [], `${knopf.e.name}=${knopf.e.categories[knopf.index]}`, false);
             return;
         }
-        if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-            this.log.error(`Schreibversuch ${name}=${state.val} bei nicht offener WebSocket-Verbindung.`);
+
+        let e = null;
+        if (rel.startsWith('values.')) {
+            e = this.katalogNachName.get(rel.slice('values.'.length)) || null;
+        } else if (rel.startsWith('named.')) {
+            const cfg = WRITE_NAMES[rel.slice('named.'.length)];
+            if (!cfg) return;
+            e = this.katalogNachName.get(cfg.katalog) || null;
+            if (!e) {
+                await this.schreibeOhneTabelle(rel, cfg, state.val);
+                return;
+            }
+        } else {
             return;
         }
-        if (!this.sharedSecret) {
-            this.log.error(`Schreibversuch ${name}=${state.val} aber sharedSecret fehlt.`);
+        if (!e || !werte.istSchreibbar(e, this.schreibCfg) || werte.istAktion(e)) {
+            this.log.warn(`${rel}: Schreiben ist nicht freigegeben (Einstellung "Schreibzugriff" oder eigene Freigaben).`);
+            await this.zurueckAufLetztenWert(rel, e);
             return;
         }
-        if (!this.subscribed) {
-            this.log.warn(`Schreibversuch ${name}=${state.val} aber Handshake noch nicht abgeschlossen - Box wird ablehnen.`);
-        }
-        let valueByte;
+        this.planeSchreiben(e, werte.boxWert(e, state.val), [rel], `${e.name}=${state.val}`, true);
+    }
+
+    /**
+     * Befehl pruefen und in die Warteschlange stellen. ids: States, die bis
+     * zur Bestaetigung der Box auf ack=false stehen.
+     */
+    planeSchreiben(e, roh, ids, text, bestaetigen) {
+        let bytes;
         try {
-            valueByte = cfg.encode(state.val);
-        } catch (e) {
-            this.log.error(`encode fehlgeschlagen fuer ${name}=${state.val}: ${e.message}`);
+            bytes = protocol.encodeCatalogValue(e, roh);
+        } catch (err) {
+            this.log.warn(`${text}: abgelehnt - ${err.message}`);
+            for (const id of ids) this.zurueckAufLetztenWert(id, e);
+            return;
+        }
+        const ziel = e.typ === 'string'
+            ? String(roh)
+            : werte.zustandsWert(e, protocol.decodeCatalogValue(e, bytes));
+        this.schreibQueue.push({ e, bytes, ids, text, bestaetigen, ziel });
+        if (!this.schreibLaeuft) this.arbeiteSchreibQueue().catch((err) => this.log.warn(`Schreiben: ${err.message}`));
+    }
+
+    async arbeiteSchreibQueue() {
+        this.schreibLaeuft = true;
+        try {
+            while (this.schreibQueue.length && !this.stopping) {
+                await this.sendeSchreiben(this.schreibQueue.shift());
+                await this.delay(SCHREIB_ABSTAND_MS);
+            }
+        } finally {
+            this.schreibLaeuft = false;
+        }
+    }
+
+    async sendeSchreiben(a) {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sharedSecret || !this.subscribed) {
+            this.log.warn(`${a.text}: keine fertige Verbindung zur Box - nicht gesendet.`);
+            for (const id of a.ids) await this.zurueckAufLetztenWert(id, a.e);
             return;
         }
         const seq = this.nextSeq();
-        // Alten Wert merken fuer Rollback bei NACK
-        let oldValue = null;
         try {
-            const oldState = await this.getStateAsync(id);
-            if (oldState) oldValue = oldState.val;
-        } catch (_) {}
-        try {
-            const frame = protocol.encodeWriteFrame(seq, cfg.wireByte, valueByte, this.sharedSecret);
-            this.ws.send(frame);
-            this.pendingWrites.set(seq, { id, oldValue, name, ts: Date.now() });
-            this.log.info(`WRITE -> ${name}=${state.val} (seq=0x${seq.toString(16).padStart(2,'0')} wire=0x${cfg.wireByte.toString(16)} val=0x${valueByte.toString(16).padStart(2,'0')})`);
-            // Pending entries nach 10s automatisch aufraeumen falls keine Antwort
-            this.setTimeout(() => {
-                if (this.pendingWrites.has(seq)) {
-                    this.pendingWrites.delete(seq);
-                }
-            }, 10_000);
-        } catch (e) {
-            this.log.error(`WRITE fehlgeschlagen fuer ${name}=${state.val}: ${e.message}`);
+            this.ws.send(protocol.encodeSetValueFrame(seq, a.e.id, a.bytes, this.sharedSecret));
+        } catch (err) {
+            this.log.error(`${a.text}: Senden fehlgeschlagen - ${err.message}`);
+            for (const id of a.ids) await this.zurueckAufLetztenWert(id, a.e);
+            return;
         }
+        this.pendingWrites.set(seq, { art: 'SET', name: a.e.name, e: a.e, ts: Date.now() });
+        this.setTimeout(() => this.pendingWrites.delete(seq), 10_000);
+        if (a.bestaetigen) {
+            const vorher = this.ausstehend.get(a.e.name);
+            if (vorher) this.clearTimeout(vorher.timer);
+            this.lastValues.delete(`val:${a.e.name}`);
+            const ids = [...new Set([...(vorher ? vorher.ids : []), ...a.ids])];
+            const timer = this.setTimeout(() => {
+                this.zuruecknehmen(a.e.name, `keine Bestaetigung nach ${BESTAETIGUNG_FRIST_MS / 1000} s`);
+            }, BESTAETIGUNG_FRIST_MS);
+            this.ausstehend.set(a.e.name, { ziel: a.ziel, ids, timer });
+        }
+        this.log.info(`SCHREIBEN -> ${a.text} (valueId ${a.e.id}, seq=0x${seq.toString(16).padStart(2, '0')}, Daten ${a.bytes.toString('hex')})`);
+    }
+
+    /** Einzelnen Wert bei der Box abfragen (GET_DEVICE_VALUE_FOR_VALUEID). */
+    frageWert(e) {
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sharedSecret) return;
+        const seq = this.nextSeq();
+        try {
+            this.ws.send(protocol.encodeGetValueFrame(seq, e.id, this.sharedSecret));
+            this.pendingWrites.set(seq, { art: 'GET', name: `GET ${e.name}`, ts: Date.now() });
+            this.setTimeout(() => this.pendingWrites.delete(seq), 10_000);
+        } catch (err) {
+            this.log.debug(`Abfrage ${e.name}: ${err.message}`);
+        }
+    }
+
+    /** Die Box hat einen Wert gemeldet: ausstehendes Schreiben abschliessen. */
+    bestaetige(e, wert) {
+        const offen = this.ausstehend.get(e.name);
+        if (!offen) return;
+        this.clearTimeout(offen.timer);
+        this.ausstehend.delete(e.name);
+        if (offen.ziel !== undefined && offen.ziel !== wert) {
+            this.log.warn(`${e.name}: Box meldet ${wert} statt ${offen.ziel}`);
+        } else {
+            this.log.info(`${e.name}: Box bestaetigt ${wert}`);
+        }
+        // Weitere States (z. B. named.Heizung_Schalter) auf den Wert der Box.
+        for (const id of offen.ids) {
+            if (id === `values.${e.name}`) continue;
+            this.setStateAsync(id, { val: wert, ack: true }).catch(() => {});
+        }
+    }
+
+    /** Schreiben gescheitert: betroffene States auf den letzten Wert der Box. */
+    async zuruecknehmen(name, grund) {
+        const offen = this.ausstehend.get(name);
+        if (!offen) return;
+        this.clearTimeout(offen.timer);
+        this.ausstehend.delete(name);
+        this.log.warn(`${name}: ${grund} - zurueck auf den letzten Wert der Box`);
+        const e = this.katalogNachName.get(name);
+        for (const id of offen.ids) await this.zurueckAufLetztenWert(id, e);
+    }
+
+    async zurueckAufLetztenWert(id, e) {
+        try {
+            let wert = e && this.lastValues.has(`val:${e.name}`) ? this.lastValues.get(`val:${e.name}`) : undefined;
+            if (wert === undefined) {
+                const st = await this.getStateAsync(id);
+                if (!st) return;
+                wert = st.val;
+            }
+            await this.setStateAsync(id, { val: wert, ack: true });
+        } catch (_) { /* ignorieren */ }
+    }
+
+    /** Werte einer Push-Meldung direkt nach values.* (Liste wie im Gesamtstand). */
+    async applyPushWerte(plain) {
+        if (!this.valueCatalog) return;
+        const antwort = protocol.decodeResponse(plain);
+        const liste = antwort && protocol.parseValueList(antwort.payload);
+        if (!liste || !liste.length) return;
+        // Nur wenn jeder Eintrag bekannt ist - sonst ist es keine Werteliste.
+        if (!liste.every((t) => this.valueCatalog.has(parseInt(t.idHex.slice(0, 4), 16)))) return;
+        await this.applyValueEntries(liste, { legacy: false });
+    }
+
+    /** Ohne Wertetabelle: alter Schreibweg nur fuer die Heizung (named.*). */
+    async schreibeOhneTabelle(rel, cfg, val) {
+        if (this.schreibCfg.stufe === 'aus') {
+            this.log.warn(`${rel}: Schreibzugriff ist ausgeschaltet.`);
+            return;
+        }
+        if (!this.ws || this.ws.readyState !== WebSocket.OPEN || !this.sharedSecret) {
+            this.log.error(`Schreibversuch ${rel}=${val} bei nicht offener Verbindung.`);
+            return;
+        }
+        let valueByte;
+        try {
+            valueByte = cfg.encode(val);
+        } catch (err) {
+            this.log.error(`encode fehlgeschlagen fuer ${rel}=${val}: ${err.message}`);
+            return;
+        }
+        const seq = this.nextSeq();
+        this.ws.send(protocol.encodeWriteFrame(seq, cfg.wireByte, valueByte, this.sharedSecret));
+        this.pendingWrites.set(seq, { name: rel, ts: Date.now() });
+        this.setTimeout(() => this.pendingWrites.delete(seq), 10_000);
+        this.log.info(`WRITE -> ${rel}=${val} (ohne Wertetabelle, wire=0x${cfg.wireByte.toString(16)})`);
     }
 
     /**

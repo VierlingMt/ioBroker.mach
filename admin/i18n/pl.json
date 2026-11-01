@@ -5,5 +5,12 @@
   "Username (e-mail)": "Nazwa użytkownika (e-mail)",
   "Password": "Hasło",
   "machId (12 hex characters)": "machId (12 znaków szesnastkowych)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Odczytuje wszystkie wartości skrzynki (values.*): przy połączeniu, co 15 minut i krótko po każdej zmianie. Zapis: ogrzewanie wł./wył. (named.Heizung_Schalter) i temperatura zadana (named.Heizung_Sollwert). Nieoficjalny adapter, nie od Adria ani Solvesall."
+  "Write access": "Dostęp do zapisu",
+  "off – read only": "wył. – tylko odczyt",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Obsługa – ogrzewanie, klimatyzacja, lodówka, światło, pompa, bojler (zalecane)",
+  "setup – also sensor pairing, limits and names (experts)": "Konfiguracja – także parowanie czujników, limity i nazwy (dla ekspertów)",
+  "Additionally writable (names, * allowed, comma separated)": "Dodatkowo zapisywalne (nazwy, * dozwolone, rozdzielone przecinkami)",
+  "Never writable (names, * allowed, comma separated)": "Nigdy niezapisywalne (nazwy, * dozwolone, rozdzielone przecinkami)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "Wartości zapisywalne pojawiają się w values.* jako przełącznik, suwak lub wybór. Nazwy są takie jak w values.*, np. FRIDGE_VALUE lub LIGHT_GROUP_*. Wartości, które mogłyby zerwać połączenie LTE lub unieruchomić skrzynkę (LTE wł./wył., ustawienia SIM, bootloader, debug), nigdy nie są zapisywalne.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Odczytuje wszystkie wartości skrzynki (values.*): przy połączeniu, co 15 minut i przy każdej zmianie. Co można przełączać, ustawia się w „Dostęp do zapisu”. Nieoficjalny adapter, nie od Adria ani Solvesall."
 }

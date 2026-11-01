@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mach",
-    "version": "1.3.7",
+    "version": "2.0.0-beta.0",
     "news": {
+      "2.0.0-beta.0": {
+        "en": "Beta: every value the box allows can be switched (heating, A/C, fridge, boiler, pump, lights, scenes …). Breaking: on/off values are boolean, selections are numbers with states.",
+        "de": "Beta: alles, was die Box erlaubt, ist schaltbar (Heizung, Klima, Kühlschrank, Boiler, Pumpe, Licht, Szenen …). Achtung: An/Aus-Werte sind boolean, Auswahlen Zahlen mit states.",
+        "ru": "Бета: всё, что позволяет блок, можно переключать (отопление, кондиционер, холодильник, бойлер, насос, свет, сцены …). Внимание: значения вкл./выкл. — boolean, выборы — числа со states.",
+        "pt": "Beta: tudo o que a caixa permite pode ser comutado (aquecimento, ar condicionado, frigorífico, boiler, bomba, luzes, cenas …). Atenção: valores ligado/desligado são boolean, seleções são números com states.",
+        "nl": "Beta: alles wat de box toestaat is schakelbaar (verwarming, airco, koelkast, boiler, pomp, licht, scènes …). Let op: aan/uit-waarden zijn boolean, keuzes zijn getallen met states.",
+        "fr": "Bêta : tout ce que le boîtier permet peut être commandé (chauffage, climatisation, réfrigérateur, chauffe-eau, pompe, éclairage, scènes …). Attention : les valeurs marche/arrêt sont booléennes, les sélections des nombres avec states.",
+        "it": "Beta: tutto ciò che la centralina consente è comandabile (riscaldamento, clima, frigorifero, boiler, pompa, luci, scene …). Attenzione: i valori on/off sono boolean, le selezioni numeri con states.",
+        "es": "Beta: todo lo que la caja permite se puede conmutar (calefacción, climatización, nevera, calentador, bomba, luces, escenas …). Atención: los valores encendido/apagado son boolean, las selecciones números con states.",
+        "pl": "Beta: wszystko, na co pozwala skrzynka, można przełączać (ogrzewanie, klimatyzacja, lodówka, bojler, pompa, światło, sceny …). Uwaga: wartości wł./wył. są typu boolean, wybory to liczby ze states.",
+        "uk": "Бета: усе, що дозволяє блок, можна перемикати (опалення, кондиціонер, холодильник, бойлер, насос, світло, сцени …). Увага: значення увімк./вимк. — boolean, вибори — числа зі states.",
+        "zh-cn": "测试版：设备允许的一切都可切换（暖气、空调、冰箱、热水器、水泵、灯光、场景……）。注意：开/关值为 boolean，选择为带 states 的数字。"
+      },
       "1.3.7": {
         "en": "Folders are also created for older states that no longer receive values.",
         "de": "Ordner werden auch für ältere States angelegt, die keine Werte mehr bekommen.",
@@ -159,7 +172,10 @@
   "native": {
     "username": "",
     "password": "",
-    "machId": ""
+    "machId": "",
+    "schreiben": "bedienung",
+    "eigeneFreigaben": "",
+    "eigeneSperren": ""
   },
   "objects": [],
   "instanceObjects": [

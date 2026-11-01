@@ -80,7 +80,8 @@ like `01 00 07 [msgId] [status] [crc] FE`.
 | Opcode | Name | Payload |
 |---|---|---|
 | `0x05` | GET_ALL_DEVICE_VALUES | empty → answer is a value list (§ 5) |
-| `0x07` | SET_DEVICE_VALUE_FOR_VALUEID | `[valueId:2][value]` |
+| `0x06` | GET_DEVICE_VALUE_FOR_VALUEID | `[valueId:2]` → answer is a value list with this value |
+| `0x07` | SET_DEVICE_VALUE_FOR_VALUEID | `[valueId:2][value]`, value encoded as in § 5a |
 | `0x09` | SYSTEM_RESET | empty (restart, like "Restart MACH" in the app) |
 
 During the handshake the adapter also sends `0x02`, `0x0c`, `0x35` and
@@ -122,6 +123,25 @@ The type key contains the kind of value:
 Example: `AIR_HEATER_TEMPERATURE` (67 = `0x0043`) has dividend 2, so the
 raw value `0x0A` means 5 °C. Writing 5 °C is `0x07` with payload
 `00 43 0A`.
+
+## 5a. Encoding a value for writing
+
+The value table marks writable values (`writable: true` in `typesConfigs`).
+The value bytes after `[valueId:2]` depend on the kind:
+
+| Kind | Bytes |
+|---|---|
+| `CATEGORICAL` | 1 byte: position in `categories` (`off`=0, `on`=1, …) |
+| `INTEGER` | signed big endian, `bytes` long (default 2); with `offState`, "off" is a single byte `0` |
+| `FLOAT` | value × `dividend`, signed big endian, `bytes` long (default 2) |
+| `STRING` | `[length:1][UTF-8]` |
+
+`range` and `step` in the value table give the allowed values. Types with
+`hasState: false` are actions (`start`, `press`, `save`/`restore`): writing
+the position triggers the action, there is no state to read back.
+
+Examples: heating on `00 40 01`, heating target 17.5 °C `00 43 23`
+(dividend 2), light group 1 at 42 % `00 5b 2a`.
 
 ## 6. Older push frame view (`named.*`, `tlv.*`)
 

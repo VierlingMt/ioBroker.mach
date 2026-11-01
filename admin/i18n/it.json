@@ -5,5 +5,12 @@
   "Username (e-mail)": "Nome utente (e-mail)",
   "Password": "Password",
   "machId (12 hex characters)": "machId (12 caratteri esadecimali)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Legge tutti i valori della centralina (values.*): alla connessione, ogni 15 minuti e poco dopo ogni modifica. Scrivibile: riscaldamento acceso/spento (named.Heizung_Schalter) e temperatura impostata (named.Heizung_Sollwert). Adattatore non ufficiale, non di Adria o Solvesall."
+  "Write access": "Accesso in scrittura",
+  "off – read only": "spento – sola lettura",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Uso – riscaldamento, clima, frigorifero, luci, pompa, boiler (consigliato)",
+  "setup – also sensor pairing, limits and names (experts)": "Configurazione – anche abbinamento sensori, limiti e nomi (esperti)",
+  "Additionally writable (names, * allowed, comma separated)": "Scrivibili in aggiunta (nomi, * consentito, separati da virgola)",
+  "Never writable (names, * allowed, comma separated)": "Mai scrivibili (nomi, * consentito, separati da virgola)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "I valori scrivibili compaiono sotto values.* come interruttore, cursore o selezione. I nomi sono quelli sotto values.*, ad es. FRIDGE_VALUE o LIGHT_GROUP_*. I valori che potrebbero interrompere la connessione LTE o bloccare la centralina (LTE on/off, impostazioni SIM, bootloader, debug) non sono mai scrivibili.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Legge tutti i valori della centralina (values.*): alla connessione, ogni 15 minuti e a ogni modifica. Cosa si può comandare si imposta in «Accesso in scrittura». Adattatore non ufficiale, non di Adria o Solvesall."
 }

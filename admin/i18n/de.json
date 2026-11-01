@@ -5,5 +5,12 @@
   "Username (e-mail)": "Benutzername (E-Mail)",
   "Password": "Passwort",
   "machId (12 hex characters)": "machId (12 Hex-Zeichen)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Liest alle Werte der Box (values.*): beim Verbinden, alle 15 Minuten und kurz nach jeder Änderung. Schreibbar: Heizung an/aus (named.Heizung_Schalter) und Sollwert (named.Heizung_Sollwert). Inoffizieller Adapter, nicht von Adria oder Solvesall."
+  "Write access": "Schreibzugriff",
+  "off – read only": "aus – nur lesen",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Bedienung – Heizung, Klima, Kühlschrank, Licht, Pumpe, Boiler (empfohlen)",
+  "setup – also sensor pairing, limits and names (experts)": "Einrichtung – zusätzlich Sensoren anlernen, Grenzwerte, Namen (für Experten)",
+  "Additionally writable (names, * allowed, comma separated)": "Zusätzlich schreibbar (Namen, * erlaubt, durch Komma getrennt)",
+  "Never writable (names, * allowed, comma separated)": "Nie schreibbar (Namen, * erlaubt, durch Komma getrennt)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "Schreibbare Werte erscheinen unter values.* als Schalter, Regler oder Auswahl. Namen sind die unter values.*, z. B. FRIDGE_VALUE oder LIGHT_GROUP_*. Werte, die die LTE-Verbindung kappen oder die Box lahmlegen könnten (LTE an/aus, SIM-Einstellungen, Bootloader, Debug), sind nie schreibbar.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Liest alle Werte der Box (values.*): beim Verbinden, alle 15 Minuten und bei jeder Änderung. Was geschaltet werden darf, steht unter „Schreibzugriff\". Inoffizieller Adapter, nicht von Adria oder Solvesall."
 }

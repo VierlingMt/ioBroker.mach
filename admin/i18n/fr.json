@@ -5,5 +5,12 @@
   "Username (e-mail)": "Nom d'utilisateur (e-mail)",
   "Password": "Mot de passe",
   "machId (12 hex characters)": "machId (12 caractères hexadécimaux)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Lit toutes les valeurs du boîtier (values.*) : à la connexion, toutes les 15 minutes et peu après chaque changement. Modifiable : chauffage marche/arrêt (named.Heizung_Schalter) et température de consigne (named.Heizung_Sollwert). Adaptateur non officiel, ni Adria ni Solvesall."
+  "Write access": "Accès en écriture",
+  "off – read only": "désactivé – lecture seule",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Utilisation – chauffage, climatisation, réfrigérateur, éclairage, pompe, chauffe-eau (recommandé)",
+  "setup – also sensor pairing, limits and names (experts)": "Configuration – aussi appairage des capteurs, limites et noms (experts)",
+  "Additionally writable (names, * allowed, comma separated)": "Modifiables en plus (noms, * autorisé, séparés par des virgules)",
+  "Never writable (names, * allowed, comma separated)": "Jamais modifiables (noms, * autorisé, séparés par des virgules)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "Les valeurs modifiables apparaissent sous values.* comme interrupteur, curseur ou sélection. Les noms sont ceux sous values.*, p. ex. FRIDGE_VALUE ou LIGHT_GROUP_*. Les valeurs qui pourraient couper la connexion LTE ou bloquer le boîtier (LTE marche/arrêt, paramètres SIM, bootloader, débogage) ne sont jamais modifiables.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Lit toutes les valeurs du boîtier (values.*) : à la connexion, toutes les 15 minutes et à chaque changement. Ce qui peut être commandé se règle sous « Accès en écriture ». Adaptateur non officiel, ni Adria ni Solvesall."
 }

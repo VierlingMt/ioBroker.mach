@@ -5,5 +5,12 @@
   "Username (e-mail)": "用户名（电子邮件）",
   "Password": "密码",
   "machId (12 hex characters)": "machId（12 位十六进制字符）",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "读取设备的所有数值（values.*）：连接时、每 15 分钟以及每次变化后不久。可写：暖气开/关（named.Heizung_Schalter）和目标温度（named.Heizung_Sollwert）。非官方适配器，与 Adria 或 Solvesall 无关。"
+  "Write access": "写入权限",
+  "off – read only": "关闭 – 只读",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "操作 – 暖气、空调、冰箱、灯光、水泵、热水器（推荐）",
+  "setup – also sensor pairing, limits and names (experts)": "设置 – 另含传感器配对、限值和名称（专家）",
+  "Additionally writable (names, * allowed, comma separated)": "额外可写（名称，可用 *，逗号分隔）",
+  "Never writable (names, * allowed, comma separated)": "永不可写（名称，可用 *，逗号分隔）",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "可写的值以开关、滑块或选择的形式出现在 values.* 下。名称即 values.* 下的名称，例如 FRIDGE_VALUE 或 LIGHT_GROUP_*。可能切断 LTE 连接或使设备无法使用的值（LTE 开/关、SIM 设置、引导程序、调试）永远不可写。",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "读取设备的所有数值（values.*）：连接时、每 15 分钟以及每次变化时。可切换的内容在“写入权限”中设置。非官方适配器，与 Adria 或 Solvesall 无关。"
 }

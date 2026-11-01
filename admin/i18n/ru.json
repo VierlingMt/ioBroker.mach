@@ -5,5 +5,12 @@
   "Username (e-mail)": "Имя пользователя (e-mail)",
   "Password": "Пароль",
   "machId (12 hex characters)": "machId (12 шестнадцатеричных символов)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Считывает все значения блока (values.*): при подключении, каждые 15 минут и вскоре после каждого изменения. Запись: отопление вкл./выкл. (named.Heizung_Schalter) и заданная температура (named.Heizung_Sollwert). Неофициальный адаптер, не от Adria или Solvesall."
+  "Write access": "Доступ на запись",
+  "off – read only": "выкл. – только чтение",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Управление – отопление, кондиционер, холодильник, свет, насос, бойлер (рекомендуется)",
+  "setup – also sensor pairing, limits and names (experts)": "Настройка – также привязка датчиков, пределы и имена (для экспертов)",
+  "Additionally writable (names, * allowed, comma separated)": "Дополнительно доступны для записи (имена, допускается *, через запятую)",
+  "Never writable (names, * allowed, comma separated)": "Никогда не записывать (имена, допускается *, через запятую)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "Доступные для записи значения появляются в values.* как переключатель, ползунок или выбор. Имена — как в values.*, например FRIDGE_VALUE или LIGHT_GROUP_*. Значения, которые могут разорвать LTE-соединение или вывести блок из строя (LTE вкл./выкл., настройки SIM, загрузчик, отладка), записывать нельзя никогда.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Считывает все значения блока (values.*): при подключении, каждые 15 минут и при каждом изменении. Что можно переключать, задаётся в разделе «Доступ на запись». Неофициальный адаптер, не от Adria или Solvesall."
 }

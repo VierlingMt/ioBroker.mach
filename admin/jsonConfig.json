@@ -62,7 +62,79 @@
         },
         "_status": {
           "type": "staticText",
-          "text": "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.",
+          "text": "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "_headerWrite": {
+          "type": "header",
+          "text": "Write access",
+          "size": 4,
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 12,
+          "xl": 12
+        },
+        "schreiben": {
+          "type": "select",
+          "label": "Write access",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 6,
+          "lg": 5,
+          "xl": 5,
+          "default": "bedienung",
+          "options": [
+            {
+              "label": "off – read only",
+              "value": "aus"
+            },
+            {
+              "label": "operation – heating, climate, fridge, lights, pump, boiler (recommended)",
+              "value": "bedienung"
+            },
+            {
+              "label": "setup – also sensor pairing, limits and names (experts)",
+              "value": "einrichtung"
+            }
+          ]
+        },
+        "eigeneFreigaben": {
+          "type": "text",
+          "label": "Additionally writable (names, * allowed, comma separated)",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 10,
+          "xl": 10,
+          "default": "",
+          "minRows": 2,
+          "maxRows": 6
+        },
+        "eigeneSperren": {
+          "type": "text",
+          "label": "Never writable (names, * allowed, comma separated)",
+          "newLine": true,
+          "xs": 12,
+          "sm": 12,
+          "md": 12,
+          "lg": 10,
+          "xl": 10,
+          "default": "",
+          "minRows": 2,
+          "maxRows": 6
+        },
+        "_hintWrite": {
+          "type": "staticText",
+          "text": "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.",
           "newLine": true,
           "xs": 12,
           "sm": 12,

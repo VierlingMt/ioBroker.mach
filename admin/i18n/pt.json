@@ -5,5 +5,12 @@
   "Username (e-mail)": "Utilizador (e-mail)",
   "Password": "Palavra-passe",
   "machId (12 hex characters)": "machId (12 caracteres hexadecimais)",
-  "Reads all values of the box (values.*): at connect, every 15 minutes and shortly after every change. Writable: heating on/off (named.Heizung_Schalter) and target temperature (named.Heizung_Sollwert). Unofficial adapter, not made by Adria or Solvesall.": "Lê todos os valores da caixa (values.*): ao ligar, a cada 15 minutos e pouco depois de cada alteração. Gravável: aquecimento ligado/desligado (named.Heizung_Schalter) e temperatura desejada (named.Heizung_Sollwert). Adaptador não oficial, não é da Adria nem da Solvesall."
+  "Write access": "Acesso de escrita",
+  "off – read only": "desligado – só leitura",
+  "operation – heating, climate, fridge, lights, pump, boiler (recommended)": "Utilização – aquecimento, ar condicionado, frigorífico, luzes, bomba, boiler (recomendado)",
+  "setup – also sensor pairing, limits and names (experts)": "Configuração – também emparelhar sensores, limites e nomes (especialistas)",
+  "Additionally writable (names, * allowed, comma separated)": "Também graváveis (nomes, * permitido, separados por vírgula)",
+  "Never writable (names, * allowed, comma separated)": "Nunca graváveis (nomes, * permitido, separados por vírgula)",
+  "Writable values appear under values.* as switch, slider or selection. Names are the ones under values.*, e.g. FRIDGE_VALUE or LIGHT_GROUP_*. Values that could cut the LTE connection or brick the box (LTE on/off, SIM settings, bootloader, debug) can never be written.": "Os valores graváveis aparecem em values.* como interruptor, deslizador ou seleção. Os nomes são os de values.*, p. ex. FRIDGE_VALUE ou LIGHT_GROUP_*. Valores que possam cortar a ligação LTE ou bloquear a caixa (LTE ligado/desligado, definições do SIM, bootloader, depuração) nunca podem ser gravados.",
+  "Reads all values of the box (values.*): at connect, every 15 minutes and on every change. What can be switched is set under \"Write access\". Unofficial adapter, not made by Adria or Solvesall.": "Lê todos os valores da caixa (values.*): ao ligar, a cada 15 minutos e em cada alteração. O que pode ser comutado define-se em «Acesso de escrita». Adaptador não oficial, não é da Adria nem da Solvesall."
 }

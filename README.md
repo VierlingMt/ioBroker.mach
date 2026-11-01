@@ -26,18 +26,17 @@ app does over LTE, and makes the box values available in ioBroker.
   app (`values.AIR_HEATER_TEMPERATURE`, `values.FRIDGE_VALUE`,
   `values.GAS_BOTTLE_LEVEL`, …), with scaling and value lists from the
   value table your own account downloads from the MACH backend.
-- Live push updates for frequently changing values (`named.*`).
-- **Heating can be switched** (`named.Heizung_Schalter`) and its target
-  temperature set (`named.Heizung_Sollwert`, 0.5 °C steps). Verified on a
-  real box.
+- Changes reported by the box are applied immediately (push).
+- **Everything the box allows can be switched** (from 2.0.0, beta): heating,
+  air conditioning, fridge, boiler, water pump, lights and light scenes,
+  energy source and more – directly on `values.<NAME>` as switch, slider or
+  selection. What is writable comes from the value table of your box, so it
+  works for every Adria model. See [Writing values](#writing-values).
 - `control.reboot` restarts the box like "Restart MACH" in the app
   (at most once every 10 minutes).
 - Sensitive values (Bluetooth PIN, SIM ICCID/IMSI, modem IMEI) are
   deliberately **not** stored as states.
 
-Not yet: switching anything other than the heating (fridge, lights, pumps,
-boiler). The protocol supports it, but it is not verified, so the adapter
-does not offer it.
 
 ## Requirements
 
@@ -58,6 +57,47 @@ It is available there once it has been added to the ioBroker repositories.
 | `username` | e-mail of your MACH app account                             |
 | `password` | password (stored encrypted)                                 |
 | `machId`   | 12 hex characters, e.g. `A1B2C3D4E5F6` (app → device settings) |
+| Write access | `off`, `operation` (default) or `setup` – see below |
+| Additionally writable | own list of names, `*` allowed |
+| Never writable | own list of names, `*` allowed |
+
+## Writing values
+
+From 2.0.0 every value the box allows to change is writable under
+`values.<NAME>` – write it with `ack=false` like any other state:
+
+| Value in the box | State | Example |
+|---|---|---|
+| on/off | `boolean`, role `switch` | `values.FRIDGE_VALUE = true` |
+| selection | `number` with `states` | `values.WATER_HEATER_TEMPERATURE = 2` (boost) |
+| number with range | `number` with `min`/`max`/`step` | `values.LIGHT_GROUP_1_BRIGHTNESS = 40`, `0` = off |
+| action without state | one button per action | `values.LIGHT_SYSTEM_MEMORY_1_RESTORE = true` |
+| text | `string` | only in "setup" |
+
+The adapter checks range, step and selection, sends the commands one after
+another and then asks the box for the value. The state gets `ack=true` with
+the value the **box** reports. If the box rejects or does not confirm
+within 20 s, the state returns to the last value of the box.
+
+**Write access** (instance settings):
+
+- **operation** (default): everything the value table marks as writable,
+  except texts and setup values.
+- **setup**: additionally sensor pairing (tyre, gas, battery), limits,
+  sensor addresses and names.
+- **off**: read only.
+- **Additionally writable**: your own list for things the value table does
+  not mark as writable or that your model has in addition, e.g.
+  `MY_VALUE, LIGHT_*`. Only works for values with a known type.
+- **Never writable**: your own blocklist, e.g. `POWER_CONTROL_*`.
+
+Some values can **never** be written, whatever the settings: LTE on/off,
+all SIM settings (slot, APN, user, password, PIN), the Bluetooth PIN,
+bootloader/application mode and debug switches. A wrong value there can cut
+the LTE connection or brick the box – with no way back remotely.
+
+`named.Heizung_Schalter` and `named.Heizung_Sollwert` keep working as
+before.
 
 ## States
 
@@ -66,8 +106,9 @@ It is available there once it has been added to the ioBroker repositories.
 | `info.connection` | connected to the box |
 | `info.lastAllValuesAt` | time of the last full state (ms) – use this to detect stale data |
 | `info.lastFrameAt` | time of the last message from the box (ms) |
-| `values.<NAME>` | every value of the box, named like in the app |
-| `named.*` | live values from push messages; `Heizung_Schalter` and `Heizung_Sollwert` are writable |
+| `values.<NAME>` | every value of the box, named like in the app; writable ones as switch/slider/selection |
+| `values.<NAME>_<ACTION>` | buttons for actions without state (e.g. light scene save/restore) |
+| `named.*` | older names from the first versions (kept for existing scripts); `Heizung_Schalter` and `Heizung_Sollwert` are writable |
 | `control.reboot` | button: restart the box |
 | `tlv.*`, `frames.*` | raw values the adapter cannot name yet (for analysis) |
 
@@ -94,6 +135,21 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 2.0.0-beta.0 (2026-11-01)
+
+**Breaking:** on/off values under `values.*` are now `boolean` (was text
+`"on"`/`"off"`), other selections are `number` with `states` (was the text
+of the selection). Adjust scripts that compare with `"on"` or with the text.
+Existing objects are converted on the next start.
+
+- Writing every value the box allows (see "Writing values"), generic from
+  the value table: selections, numbers, texts, actions.
+- Write access setting (off / operation / setup) plus own allow and block
+  lists; values that could cut the connection are always blocked.
+- Commands are queued, checked against range/step/selection and confirmed by
+  asking the box for the value (GET_DEVICE_VALUE_FOR_VALUEID).
+- Values from push messages go to `values.*` right away.
+
 ### 1.3.7 (2026-10-29)
 
 - Folders are also created at start for states from older versions that no
