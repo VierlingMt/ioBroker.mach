@@ -1,6 +1,6 @@
 {
   "name": "iobroker.mach",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-beta.2",
   "description": "ioBroker adapter for Adria caravans with the MACH control box (Solvesall) - read and switch, unofficial",
   "author": {
     "name": "Martin Vierling",

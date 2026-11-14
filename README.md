@@ -143,6 +143,12 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 2.0.0-beta.2 (2026-11-14)
+
+- Negative temperatures in `named.Innentemperatur` and
+  `named.Aussentemperatur` are decoded with sign: -3 °C no longer shows
+  as 253 °C. The `values.*` states were already correct.
+
 ### 2.0.0-beta.1 (2026-11-01)
 
 - While a write is pending, a different value reported by the box (often

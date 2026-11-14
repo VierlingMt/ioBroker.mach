@@ -71,4 +71,13 @@ assert.equal(w.zustandsWert(boiler, p.decodeCatalogValue(boiler, Buffer.from([2]
 assert.equal(w.zustandsWert(licht, p.decodeCatalogValue(licht, Buffer.from([0]))), 0);
 assert.equal(w.zustandsWert(soll, p.decodeCatalogValue(soll, Buffer.from([0x23]))), 17.5);
 
+// Temperaturen unter 0 im alten named-Zweig (Bericht 14.11.2026: -3 °C stand als 253 da)
+const m = require('../lib/mappings');
+const temp = (id, b) => m.FRAME_NAMES[id].decode(b).value;
+assert.equal(temp('53002d01', 253), -3);   // Aussentemperatur
+assert.equal(temp('53002d01', 17), 17);
+assert.equal(temp('51002d01', 255), -1);   // Innentemperatur
+assert.equal(temp('51002d01', 33), 33);
+assert.equal(m.FRAME_NAMES['53002d01'].decode(253).label, '-3°C');
+
 console.log('werte: alle Pruefungen bestanden');
