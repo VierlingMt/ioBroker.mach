@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mach",
-    "version": "2.0.0-beta.2",
+    "version": "2.0.0",
     "news": {
+      "2.0.0": {
+        "en": "Breaking: the old named.* and frames.* states are removed, all values are under values.* (names from the app's value table). Settings and log messages are in English. Includes everything from the betas: every value the box allows can be switched.",
+        "de": "Achtung: die alten States named.* und frames.* entfallen, alle Werte stehen unter values.* (Namen aus der Wertetabelle der App). Einstellungen und Log-Meldungen sind englisch. Enthält alles aus den Betas: alles, was die Box erlaubt, ist schaltbar.",
+        "ru": "Внимание: старые состояния named.* и frames.* удалены, все значения находятся в values.* (имена из таблицы значений приложения). Настройки и сообщения журнала на английском. Включает всё из бета-версий: можно переключать всё, что позволяет блок.",
+        "pt": "Atenção: os antigos estados named.* e frames.* foram removidos, todos os valores estão em values.* (nomes da tabela de valores da app). Definições e mensagens de registo em inglês. Inclui tudo das betas: tudo o que a caixa permite pode ser comandado.",
+        "nl": "Let op: de oude states named.* en frames.* zijn verwijderd, alle waarden staan onder values.* (namen uit de waardentabel van de app). Instellingen en logmeldingen zijn Engels. Bevat alles uit de bèta's: alles wat de box toestaat is schakelbaar.",
+        "fr": "Attention : les anciens états named.* et frames.* sont supprimés, toutes les valeurs sont sous values.* (noms de la table de valeurs de l'application). Paramètres et messages du journal en anglais. Comprend tout des bêtas : tout ce que le boîtier permet peut être commandé.",
+        "it": "Attenzione: i vecchi stati named.* e frames.* sono stati rimossi, tutti i valori sono in values.* (nomi dalla tabella valori dell'app). Impostazioni e messaggi di log in inglese. Include tutto delle beta: tutto ciò che la centralina consente è comandabile.",
+        "es": "Atención: se eliminan los antiguos estados named.* y frames.*, todos los valores están en values.* (nombres de la tabla de valores de la app). Ajustes y mensajes de registro en inglés. Incluye todo lo de las betas: todo lo que la caja permite se puede controlar.",
+        "pl": "Uwaga: stare stany named.* i frames.* zostały usunięte, wszystkie wartości są w values.* (nazwy z tabeli wartości aplikacji). Ustawienia i komunikaty dziennika po angielsku. Zawiera wszystko z wersji beta: można przełączać wszystko, na co pozwala sterownik.",
+        "uk": "Увага: старі стани named.* і frames.* видалено, усі значення в values.* (назви з таблиці значень застосунку). Налаштування й повідомлення журналу англійською. Містить усе з бета-версій: можна перемикати все, що дозволяє блок.",
+        "zh-cn": "注意：旧的 named.* 和 frames.* 状态已移除，所有数值都在 values.* 下（名称来自应用的数值表）。设置和日志消息改为英文。包含所有测试版内容：控制盒允许的一切均可切换。"
+      },
       "2.0.0-beta.2": {
         "en": "Negative temperatures in the named states (Innentemperatur, Aussentemperatur) are now shown correctly: -3 °C no longer appears as 253 °C. The values.* states were already correct.",
         "de": "Temperaturen unter null in den named-States (Innentemperatur, Aussentemperatur) stimmen jetzt: -3 °C erscheint nicht mehr als 253 °C. Die values.*-States waren schon richtig.",
@@ -80,19 +93,6 @@
         "pl": "Bez zmian funkcjonalnych: proces wydawania dostosowany do kontroli repozytorium ioBroker.",
         "uk": "Без функціональних змін: процес випуску адаптовано до перевірки репозиторію ioBroker.",
         "zh-cn": "无功能变更：发布流程已按 ioBroker 仓库检查调整。"
-      },
-      "1.3.4": {
-        "en": "Settings page translations are now included in the package. Requires admin 7.6.20.",
-        "de": "Die Übersetzungen der Einstellungsseite sind jetzt im Paket enthalten. Benötigt Admin 7.6.20.",
-        "ru": "Переводы страницы настроек теперь входят в пакет. Требуется admin 7.6.20.",
-        "pt": "As traduções da página de configuração estão agora incluídas no pacote. Requer admin 7.6.20.",
-        "nl": "De vertalingen van de instellingenpagina zitten nu in het pakket. Vereist admin 7.6.20.",
-        "fr": "Les traductions de la page de configuration sont désormais incluses dans le paquet. Nécessite admin 7.6.20.",
-        "it": "Le traduzioni della pagina delle impostazioni sono ora incluse nel pacchetto. Richiede admin 7.6.20.",
-        "es": "Las traducciones de la página de configuración ahora se incluyen en el paquete. Requiere admin 7.6.20.",
-        "pl": "Tłumaczenia strony ustawień są teraz zawarte w pakiecie. Wymaga admin 7.6.20.",
-        "uk": "Переклади сторінки налаштувань тепер входять до пакета. Потрібен admin 7.6.20.",
-        "zh-cn": "设置页面的翻译现已包含在软件包中。需要 admin 7.6.20。"
       }
     },
     "titleLang": {
@@ -109,17 +109,17 @@
       "zh-cn": "MACH (Adria)"
     },
     "desc": {
-      "en": "ioBroker adapter for Adria caravans with the MACH control box (Solvesall): reads all values via the MACH cloud, heating can be switched. Unofficial, not affiliated with Adria or Solvesall.",
-      "de": "ioBroker-Adapter für Adria-Wohnwagen mit MACH-Steuerbox (Solvesall): liest alle Werte über die MACH-Cloud, die Heizung lässt sich schalten. Inoffiziell, nicht verbunden mit Adria oder Solvesall.",
-      "ru": "Адаптер ioBroker для караванов Adria с блоком управления MACH.",
-      "pt": "Adaptador ioBroker para caravanas Adria equipadas com a caixa de controle MACH.",
-      "nl": "ioBroker-adapter voor Adria-caravans met de MACH-besturingsbox.",
-      "fr": "Adaptateur ioBroker pour caravanes Adria equipees du boitier MACH.",
-      "it": "Adattatore ioBroker per caravan Adria con centralina MACH.",
-      "es": "Adaptador ioBroker para caravanas Adria con la caja de control MACH.",
-      "pl": "Adapter ioBroker do karawanow Adria wyposazonych w sterownik MACH.",
-      "uk": "Адаптер ioBroker для караванів Adria з блоком керування MACH.",
-      "zh-cn": "适用于配备 MACH 控制盒的 Adria 房车的 ioBroker 适配器。"
+      "en": "Adria caravans and motorhomes with the MACH box (Solvesall): reads all values via the MACH cloud and switches everything the box allows. Unofficial, not affiliated with Adria or Solvesall.",
+      "de": "Adria-Wohnwagen und -Reisemobile mit MACH-Box (Solvesall): liest alle Werte über die MACH-Cloud und schaltet alles, was die Box erlaubt. Inoffiziell, nicht verbunden mit Adria oder Solvesall.",
+      "ru": "Караваны и автодома Adria с блоком MACH (Solvesall): считывает все значения через облако MACH и переключает всё, что позволяет блок. Неофициальный, не связан с Adria или Solvesall.",
+      "pt": "Caravanas e autocaravanas Adria com a caixa MACH (Solvesall): lê todos os valores através da nuvem MACH e comanda tudo o que a caixa permite. Não oficial, sem ligação à Adria ou à Solvesall.",
+      "nl": "Adria-caravans en -campers met de MACH-box (Solvesall): leest alle waarden via de MACH-cloud en schakelt alles wat de box toestaat. Onofficieel, niet verbonden met Adria of Solvesall.",
+      "fr": "Caravanes et camping-cars Adria équipés du boîtier MACH (Solvesall) : lit toutes les valeurs via le cloud MACH et commande tout ce que le boîtier permet. Non officiel, sans lien avec Adria ou Solvesall.",
+      "it": "Caravan e camper Adria con centralina MACH (Solvesall): legge tutti i valori tramite il cloud MACH e comanda tutto ciò che la centralina consente. Non ufficiale, non affiliato ad Adria o Solvesall.",
+      "es": "Caravanas y autocaravanas Adria con la caja MACH (Solvesall): lee todos los valores a través de la nube MACH y controla todo lo que la caja permite. No oficial, sin relación con Adria ni Solvesall.",
+      "pl": "Przyczepy i kampery Adria ze sterownikiem MACH (Solvesall): odczytuje wszystkie wartości przez chmurę MACH i przełącza wszystko, na co pozwala sterownik. Nieoficjalny, niezwiązany z Adria ani Solvesall.",
+      "uk": "Каравани та автобудинки Adria з блоком MACH (Solvesall): зчитує всі значення через хмару MACH і перемикає все, що дозволяє блок. Неофіційний, не пов'язаний з Adria чи Solvesall.",
+      "zh-cn": "配备 MACH 控制盒（Solvesall）的 Adria 房车和房车：通过 MACH 云读取所有数值，并可切换控制盒允许的所有功能。非官方，与 Adria 或 Solvesall 无关。"
     },
     "authors": [
       "Martin Vierling <vierling.martin@gmail.com>"
@@ -141,7 +141,6 @@
     "enabled": false,
     "loglevel": "info",
     "compact": true,
-    "messagebox": true,
     "connectionType": "cloud",
     "dataSource": "push",
     "tier": 3,
@@ -173,9 +172,9 @@
     "username": "",
     "password": "",
     "machId": "",
-    "schreiben": "bedienung",
-    "eigeneFreigaben": "",
-    "eigeneSperren": ""
+    "writeAccess": "operation",
+    "extraWritable": "",
+    "neverWritable": ""
   },
   "objects": [],
   "instanceObjects": [
@@ -223,14 +222,6 @@
         "read": true,
         "write": false,
         "def": 0
-      },
-      "native": {}
-    },
-    {
-      "_id": "named",
-      "type": "channel",
-      "common": {
-        "name": "Named (decoded) sensor states"
       },
       "native": {}
     }

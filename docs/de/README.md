@@ -6,12 +6,21 @@ MACH-Account über die MACH-Cloud an, so wie die App über LTE.
 
 **Inoffiziell:** nicht von Adria oder Solvesall, nicht von ihnen unterstützt.
 Der Hersteller kann das Protokoll jederzeit ändern. Nutzung auf eigenes
-Risiko, besonders beim Schalten der Heizung aus der Ferne.
+Risiko, besonders beim Schalten aus der Ferne.
 
 - Liest **alle Werte** der Box: beim Verbinden, alle 15 Minuten und kurz
   nach jeder Änderung. Benannt wie in der App unter `values.*`.
-- **Heizung** schalten (`named.Heizung_Schalter`) und Sollwert setzen
-  (`named.Heizung_Sollwert`). Andere Schalter noch nicht.
+- **Schaltet alles, was die Box erlaubt** (ab 2.0.0): Heizung, Klima,
+  Kühlschrank, Boiler, Wasserpumpe, Licht und Lichtszenen, Energiequelle und
+  mehr – direkt an `values.<NAME>` als Schalter, Regler oder Auswahl. Was
+  schreibbar ist, steht in der Wertetabelle der eigenen Box. Einstellung
+  „Write access“: `off`, `operation` (Standard) oder `setup`, dazu eigene
+  Listen „Additionally writable“ und „Never writable“.
+- Teile, die sich bewegen (Markise, Slide-out, Lifte, Stufen, Dach),
+  Ventile, Schlösser und Generator sind nur schreibbar, wenn man ihren Namen
+  selbst freigibt. LTE- und SIM-Einstellungen sind nie schreibbar.
+- Ab 2.0.0 gibt es die alten deutschen States `named.*` und die rohen
+  `frames.*` nicht mehr; alle Werte stehen unter `values.*`.
 - `control.reboot` startet die Box neu (höchstens alle 10 Minuten).
 - Voraussetzung: Box mit aktivem LTE, MACH-App-Account mit dem Fahrzeug.
 - Installation: im ioBroker-Admin unter Adapter nach „mach" suchen.

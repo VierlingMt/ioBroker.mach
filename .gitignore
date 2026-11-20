@@ -20,7 +20,8 @@ iobroker-data/
 .iob/
 
 # --- Editor / OS ---
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
@@ -33,7 +34,5 @@ Thumbs.db
 !.env.example
 *.local
 
-# Standalone-Tool credentials (NIE committen, enthaelt Klartext-Passwort)
-tools/mach-mitmproxy-test/credentials.json
 # Release-Skript
 .commitinfo

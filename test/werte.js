@@ -34,22 +34,22 @@ for (const [e, v] of [[soll, 4], [soll, 31], [soll, 5.3], [licht, 101], [licht, 
 
 // Freigaben
 const cfg = (stufe, freigaben = '', sperren = '') => ({ stufe, freigaben: w.eigeneListe(freigaben), sperren: w.eigeneListe(sperren) });
-assert.equal(w.istSchreibbar(heizung, cfg('bedienung')), true);
-assert.equal(w.istSchreibbar(heizung, cfg('aus')), false);
-assert.equal(w.istSchreibbar(name, cfg('bedienung')), false);       // Text nur in "einrichtung"
-assert.equal(w.istSchreibbar(name, cfg('einrichtung')), true);
-assert.equal(w.istSchreibbar(apn, cfg('einrichtung')), false);       // fest gesperrt
-assert.equal(w.istSchreibbar(apn, cfg('einrichtung', 'LTE_SIM_APN_VALUE')), false);
-assert.equal(w.istSchreibbar(innen, cfg('bedienung')), false);       // laut Tabelle nicht schreibbar
-assert.equal(w.istSchreibbar(innen, cfg('bedienung', 'LIVING_*')), true); // eigene Freigabe
-assert.equal(w.istSchreibbar(heizung, cfg('bedienung', '', 'AIR_HEATER_*')), false); // eigene Sperre
+assert.equal(w.istSchreibbar(heizung, cfg('operation')), true);
+assert.equal(w.istSchreibbar(heizung, cfg('off')), false);
+assert.equal(w.istSchreibbar(name, cfg('operation')), false);       // Text nur in "einrichtung"
+assert.equal(w.istSchreibbar(name, cfg('setup')), true);
+assert.equal(w.istSchreibbar(apn, cfg('setup')), false);       // fest gesperrt
+assert.equal(w.istSchreibbar(apn, cfg('setup', 'LTE_SIM_APN_VALUE')), false);
+assert.equal(w.istSchreibbar(innen, cfg('operation')), false);       // laut Tabelle nicht schreibbar
+assert.equal(w.istSchreibbar(innen, cfg('operation', 'LIVING_*')), true); // eigene Freigabe
+assert.equal(w.istSchreibbar(heizung, cfg('operation', '', 'AIR_HEATER_*')), false); // eigene Sperre
 
 // Bewegliche Teile, Ventile, Schloesser, Generator: nur mit eigener Freigabe
 const markise = { id: 900, name: 'UTILITIES_AWNING_VALUE', typ: 'categorical', categories: ['off', 'on'], writable: true, hasState: true };
 const ventil = { id: 901, name: 'DRAIN_VALVE_GREY_WATER', typ: 'categorical', categories: ['close', 'open'], writable: true, hasState: true };
-assert.equal(w.istSchreibbar(markise, cfg('einrichtung')), false);
-assert.equal(w.istSchreibbar(ventil, cfg('bedienung')), false);
-assert.equal(w.istSchreibbar(markise, cfg('bedienung', 'UTILITIES_AWNING_VALUE')), true);
+assert.equal(w.istSchreibbar(markise, cfg('setup')), false);
+assert.equal(w.istSchreibbar(ventil, cfg('operation')), false);
+assert.equal(w.istSchreibbar(markise, cfg('operation', 'UTILITIES_AWNING_VALUE')), true);
 
 // Darstellung in ioBroker
 assert.deepEqual(w.objektDefinition(heizung, true), { name: 'AIR_HEATER_VALUE', read: true, write: true, type: 'boolean', role: 'switch' });
@@ -71,13 +71,17 @@ assert.equal(w.zustandsWert(boiler, p.decodeCatalogValue(boiler, Buffer.from([2]
 assert.equal(w.zustandsWert(licht, p.decodeCatalogValue(licht, Buffer.from([0]))), 0);
 assert.equal(w.zustandsWert(soll, p.decodeCatalogValue(soll, Buffer.from([0x23]))), 17.5);
 
-// Temperaturen unter 0 im alten named-Zweig (Bericht 14.11.2026: -3 °C stand als 253 da)
-const m = require('../lib/mappings');
-const temp = (id, b) => m.FRAME_NAMES[id].decode(b).value;
-assert.equal(temp('53002d01', 253), -3);   // Aussentemperatur
-assert.equal(temp('53002d01', 17), 17);
-assert.equal(temp('51002d01', 255), -1);   // Innentemperatur
-assert.equal(temp('51002d01', 33), 33);
-assert.equal(m.FRAME_NAMES['53002d01'].decode(253).label, '-3°C');
+// Temperaturen unter 0 (1 Byte mit Vorzeichen): -3 °C kommt als 0xFD
+const aussen = { id: 71, name: 'OUTSIDE_MEASURED_TEMPERATURE', typ: 'integer', bytes: 1, writable: false, hasState: true };
+assert.equal(w.zustandsWert(aussen, p.decodeCatalogValue(aussen, Buffer.from([0xfd]))), -3);
+assert.equal(w.zustandsWert(aussen, p.decodeCatalogValue(aussen, Buffer.from([17]))), 17);
+
+// Einstellungen: neue Namen, sonst die deutschen aus den Betas
+assert.deepEqual(w.schreibKonfig({ writeAccess: 'setup', extraWritable: 'A_*', neverWritable: 'B' }).stufe, 'setup');
+assert.equal(w.schreibKonfig({ schreiben: 'einrichtung' }).stufe, 'setup');
+assert.equal(w.schreibKonfig({ schreiben: 'aus', eigeneFreigaben: 'X_VALUE' }).freigabenText, 'X_VALUE');
+assert.equal(w.schreibKonfig({ writeAccess: 'off', schreiben: 'einrichtung' }).stufe, 'off');   // neu gewinnt
+assert.equal(w.schreibKonfig({}).stufe, 'operation');
+assert.equal(w.schreibKonfig({ writeAccess: 'quatsch' }).stufe, 'operation');
 
 console.log('werte: alle Pruefungen bestanden');

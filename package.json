@@ -1,7 +1,7 @@
 {
   "name": "iobroker.mach",
-  "version": "2.0.0-beta.2",
-  "description": "ioBroker adapter for Adria caravans with the MACH control box (Solvesall) - read and switch, unofficial",
+  "version": "2.0.0",
+  "description": "Adria caravans and motorhomes with the MACH box (Solvesall): read all values and switch everything the box allows. Unofficial.",
   "author": {
     "name": "Martin Vierling",
     "email": "vierling.martin@gmail.com"
@@ -47,9 +47,17 @@
     "test:js": "node --check main.js && node -e \"process.exit(require('./lib/protocol.js').l1CrcSelfTest() ? 0 : 1)\" && node test/werte.js",
     "test:package": "node test/werte.js && mocha test/package.js --exit",
     "test:integration": "mocha test/integration.js --exit",
-    "test": "npm run test:js && npm run test:package"
+    "test": "npm run test:js && npm run test:package",
+    "check": "tsc --noEmit",
+    "lint": "eslint -c eslint.config.mjs .",
+    "translate": "translate-adapter"
   },
   "devDependencies": {
-    "@iobroker/testing": "^6.3.1"
+    "@iobroker/adapter-dev": "^1.5.0",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@iobroker/testing": "^6.3.1",
+    "@tsconfig/node22": "^22.0.7",
+    "@types/node": "^22.20.5",
+    "typescript": "~5.9"
   }
 }

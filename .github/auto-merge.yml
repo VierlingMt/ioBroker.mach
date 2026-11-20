@@ -1,0 +1,8 @@
+# Regeln fuer automerge-dependabot.yml: nur Patches fuer Laufzeit-Abhaengigkeiten,
+# Patches und Minor-Updates fuer Entwickler-Werkzeuge.
+- match:
+    dependency_type: production
+    update_type: "semver:patch"
+- match:
+    dependency_type: development
+    update_type: "semver:minor"

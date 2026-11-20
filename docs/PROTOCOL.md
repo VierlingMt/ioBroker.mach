@@ -143,10 +143,11 @@ the position triggers the action, there is no state to read back.
 Examples: heating on `00 40 01`, heating target 17.5 °C `00 43 23`
 (dividend 2), light group 1 at 42 % `00 5b 2a`.
 
-## 6. Older push frame view (`named.*`, `tlv.*`)
+## 6. Older push frame view (before 2.0.0)
 
 Before the value table was known, the adapter decoded push messages by
 their first bytes ("outer ID", e.g. `43804701` = heating target). The
-`named.*` states still use this view because existing scripts rely on it.
-The outer ID is a value list entry read from the low byte of its
-`valueId`. New code should use `values.*`.
+outer ID is a value list entry read from the low byte of its `valueId`.
+Versions before 2.0.0 created `named.*` and `frames.*` states from this
+view; 2.0.0 removed them, everything is under `values.*`. Values that are
+not in the value table are stored raw under `tlv.<id>`.

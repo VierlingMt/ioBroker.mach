@@ -43,7 +43,7 @@ app does over LTE, and makes the box values available in ioBroker.
 - An Adria vehicle with a MACH box and **active LTE connectivity** (the
   adapter talks to the box through the MACH cloud, not via Bluetooth/WiFi)
 - A MACH app account that has the vehicle paired
-- ioBroker with js-controller ≥ 5, admin ≥ 6, Node.js ≥ 18
+- ioBroker with js-controller ≥ 6.0.11, admin ≥ 7.6.20, Node.js ≥ 22
 
 ## Installation
 
@@ -104,9 +104,6 @@ all SIM settings (slot, APN, user, password, PIN), the Bluetooth PIN,
 bootloader/application mode and debug switches. A wrong value there can cut
 the LTE connection or brick the box – with no way back remotely.
 
-`named.Heizung_Schalter` and `named.Heizung_Sollwert` keep working as
-before.
-
 ## States
 
 | State | Meaning |
@@ -116,9 +113,8 @@ before.
 | `info.lastFrameAt` | time of the last message from the box (ms) |
 | `values.<NAME>` | every value of the box, named like in the app; writable ones as switch/slider/selection |
 | `values.<NAME>_<ACTION>` | buttons for actions without state (e.g. light scene save/restore) |
-| `named.*` | older names from the first versions (kept for existing scripts); `Heizung_Schalter` and `Heizung_Sollwert` are writable |
 | `control.reboot` | button: restart the box |
-| `tlv.*`, `frames.*` | raw values the adapter cannot name yet (for analysis) |
+| `tlv.*` | raw values that are not in the value table (for analysis) |
 
 The value table itself is saved to `0_userdata.0/mach/drivers.json` for
 reference.
@@ -134,7 +130,7 @@ See [docs/PROTOCOL.md](docs/PROTOCOL.md).
 ## Contributing
 
 Reports from other Adria models are very welcome – especially which values
-your box reports (`values.*`) and whether the heating can be switched.
+your box reports (`values.*`) and which of them can be switched.
 Please **never** post your password, `machId`, `sharedSecret`, tokens or
 raw captures in issues.
 
@@ -143,6 +139,28 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### 2.0.0 (2026-11-20)
+
+**Breaking changes – please read before updating from 1.x:**
+
+- The old trees `named.*` (German IDs such as `named.Heizung_Aktiv`) and
+  `frames.*` are no longer created; on start the adapter deletes them.
+  States with custom settings (e.g. history) are kept and logged once.
+  Every value is under `values.*` with the name from the app's value
+  table, e.g. `named.Heizung_Schalter` → `values.AIR_HEATER_VALUE`,
+  `named.Heizung_Sollwert` → `values.AIR_HEATER_TEMPERATURE`,
+  `named.Innentemperatur` → `values.LIVING_MEASURED_TEMPERATURE`.
+  Please update scripts, aliases and visualisations.
+- The heating write path without value table (from 1.x) was removed;
+  writing always uses the value table of the box.
+- Settings got English names (`writeAccess`, `extraWritable`,
+  `neverWritable`); values from the 2.0.0 betas are taken over.
+- All log messages are in English.
+
+Everything from the betas 2.0.0-beta.0 to beta.2 (writing every value the
+box allows, write access levels, own allow and block lists, moving parts
+only with own allow list, waiting for the box confirmation).
+
 ### 2.0.0-beta.2 (2026-11-14)
 
 - Negative temperatures in `named.Innentemperatur` and
@@ -179,46 +197,7 @@ Existing objects are converted on the next start.
 - Folders are also created at start for states from older versions that no
   longer receive values (e.g. `frames.*`), so every object has its parents.
 
-### 1.3.6 (2026-10-28)
-
-- Read-only states no longer use `switch.*` or `level.*` roles: on/off values
-  are `indicator`, temperatures `value.temperature`, everything else `value`.
-  Objects created by older versions are updated on the next start.
-- Every path segment now has its own object: `values`, `tlv` and `frames` are
-  folders, `tlv.<id>` and `frames.<id>` channels. Created on the next start
-  for existing installations.
-
-### 1.3.5 (2026-10-28)
-
-- No functional changes. Releases are tagged by a push again, so every
-  release has a tag-triggered test run as the ioBroker repository check
-  expects.
-
-### 1.3.4 (2026-10-28)
-
-- Settings page translations (`admin/i18n`) are now part of the npm package.
-- Requires admin 7.6.20.
-
-### 1.3.3 (2026-10-28)
-
-- Settings page translated into 11 languages, with responsive layout.
-- Timers are managed by ioBroker (`this.setTimeout`/`this.setInterval`).
-- Requires Node.js 22, js-controller 6.0.11 and admin 7.6.17.
-- Releases are published to npm via trusted publishing.
-
-### 1.3.2 (2026-10-28)
-
-First public release. Earlier versions were developed and tested privately
-on one box (Adria Adora, MACH V2, LTE).
-
-- Login via the MACH cloud, WebSocket with AES-128-CBC and HMAC-SHA1.
-- Full state of the box at connect, every 15 minutes and shortly after
-  every push message; values named from the value table of the backend
-  (`values.*`).
-- Heating on/off and target temperature can be written (verified live).
-- `control.reboot` restarts the box (at most every 10 minutes).
-- Bluetooth PIN, SIM ICCID/IMSI and modem IMEI are not stored as states.
-- Logs show `machId` and user name only shortened; tokens never.
+Older entries are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 
