@@ -76,6 +76,10 @@ const aussen = { id: 71, name: 'OUTSIDE_MEASURED_TEMPERATURE', typ: 'integer', b
 assert.equal(w.zustandsWert(aussen, p.decodeCatalogValue(aussen, Buffer.from([0xfd]))), -3);
 assert.equal(w.zustandsWert(aussen, p.decodeCatalogValue(aussen, Buffer.from([17]))), 17);
 
+// Namen aus der Wertetabelle als Objekt-ID-Teil
+assert.equal(w.idTeil('AIR_HEATER_VALUE'), 'AIR_HEATER_VALUE');
+assert.equal(w.idTeil('a.b c*d'), 'a_b_c_d');
+
 // Einstellungen: neue Namen, sonst die deutschen aus den Betas
 assert.deepEqual(w.schreibKonfig({ writeAccess: 'setup', extraWritable: 'A_*', neverWritable: 'B' }).stufe, 'setup');
 assert.equal(w.schreibKonfig({ schreiben: 'einrichtung' }).stufe, 'setup');

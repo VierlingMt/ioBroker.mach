@@ -7,7 +7,13 @@ const protocol = require('./lib/protocol');
 const werte = require('./lib/werte');
 
 const HEARTBEAT_INTERVAL_MS = 10_000;
+// Neuer Verbindungsversuch: erst nach 15 s, bei weiteren Fehlschlaegen immer
+// laenger bis 10 min - ein falsches Passwort soll das MACH-Konto nicht mit
+// Logins fluten. Plus etwas Zufall, damit nicht alle Instanzen gleichzeitig.
 const RECONNECT_DELAY_MS = 15_000;
+const RECONNECT_DELAY_MAX_MS = 10 * 60_000;
+// Aufbau der WebSocket-Verbindung darf hoechstens so lange dauern.
+const WS_HANDSHAKE_TIMEOUT_MS = 30_000;
 // Schutz gegen Schleifen (z. B. Skript-Fehler): hoechstens ein Neustart je Zeitraum.
 const REBOOT_MIN_ABSTAND_MS = 10 * 60 * 1000;
 // Die Box pusht nur Aenderungen; ein verpasster Wechsel bliebe sonst stehen
@@ -70,8 +76,6 @@ const VERTRAULICH = new Set([
     'LTE_SIM_ID_VALUE',
     'LTE_MODEM_IMEI',
 ]);
-// Ablage der Server-Wertetabelle zur Analyse (ioBroker-Dateispeicher).
-const ABLAGE_ADAPTER = '0_userdata.0';
 
 class Mach extends utils.Adapter {
     constructor(options) {
@@ -82,6 +86,7 @@ class Mach extends utils.Adapter {
 
         /** @type {WebSocket|null} */
         this.ws = null;
+        this.reconnectVersuche = 0;
         this.msgStats = { binaryTotal: 0, textTotal: 0, decryptFail: 0, push: 0 };
         this.heartbeatTimer = null;
         this.reconnectTimer = null;
@@ -169,7 +174,7 @@ class Mach extends utils.Adapter {
         await this.extendObjectAsync('control.reboot', {
             common: { name: 'Restart the MACH box (like in the app)' },
         }).catch(() => {});
-        this.connect();
+        this.connect().catch(e => this.log.warn(`Connect: ${e.message}`));
     }
 
     /**
@@ -320,6 +325,7 @@ class Mach extends utils.Adapter {
                 id: machId,
             },
             perMessageDeflate: true,
+            handshakeTimeout: WS_HANDSHAKE_TIMEOUT_MS,
             agent: sharedAgent,
         });
         this.ws = ws;
@@ -334,6 +340,7 @@ class Mach extends utils.Adapter {
                 return;
             }
             this.log.info('WebSocket open');
+            this.reconnectVersuche = 0;
             this.seqCounter = 1; // bei jedem (Re-)connect zuruecksetzen
             this.subscribed = false;
             this.setStateAsync('info.connection', { val: true, ack: true }).catch(() => {});
@@ -548,6 +555,8 @@ class Mach extends utils.Adapter {
         this.katalogNachName = new Map();
         if (this.valueCatalog) {
             for (const e of this.valueCatalog.values()) {
+                // Namen kommen vom Backend und werden Teil der Objekt-ID.
+                e.name = werte.idTeil(e.name);
                 this.katalogNachName.set(e.name, e);
             }
             this.log.info(`Value table: ${this.valueCatalog.size} values known (get-drivers-json)`);
@@ -558,6 +567,18 @@ class Mach extends utils.Adapter {
                     : typeof auth.driversResponse;
             this.log.warn(`Value table missing in get-drivers-json (fields: ${felder}) - only raw values under tlv.*`);
         }
+        // Rohantworten zum Nachschlagen in den Dateispeicher der Instanz
+        // (Admin -> Dateien -> mach.0).
+        try {
+            await this.setForeignObjectNotExistsAsync(this.namespace, {
+                type: 'meta',
+                common: { name: 'MACH value table (for reference)', type: 'meta.user' },
+                native: {},
+            });
+        } catch (e) {
+            this.log.debug(`Could not create file storage: ${e.message}`);
+            return;
+        }
         for (const [datei, inhalt] of [
             ['drivers.json', auth.driversResponse],
             ['config.json', auth.configResponse],
@@ -566,7 +587,7 @@ class Mach extends utils.Adapter {
                 continue;
             }
             try {
-                await this.writeFileAsync(ABLAGE_ADAPTER, `mach/${datei}`, JSON.stringify(inhalt, null, 1));
+                await this.writeFileAsync(this.namespace, datei, JSON.stringify(inhalt, null, 1));
             } catch (e) {
                 this.log.debug(`Could not store ${datei}: ${e.message}`);
             }
@@ -966,7 +987,9 @@ class Mach extends utils.Adapter {
             this.lastValues.delete(`val:${a.e.name}`);
             const ids = [...new Set([...(vorher ? vorher.ids : []), ...a.ids])];
             const timer = this.setTimeout(() => {
-                this.zuruecknehmen(a.e.name, `no confirmation after ${BESTAETIGUNG_FRIST_MS / 1000} s`);
+                this.zuruecknehmen(a.e.name, `no confirmation after ${BESTAETIGUNG_FRIST_MS / 1000} s`).catch(err =>
+                    this.log.warn(`${a.e.name}: ${err.message}`),
+                );
             }, BESTAETIGUNG_FRIST_MS);
             this.ausstehend.set(a.e.name, { ziel: a.ziel, ids, timer });
         }
@@ -1178,12 +1201,19 @@ class Mach extends utils.Adapter {
         if (this.stopping || this.reconnectTimer) {
             return;
         }
+        const versuch = this.reconnectVersuche || 0;
+        this.reconnectVersuche = versuch + 1;
+        const basis = Math.min(RECONNECT_DELAY_MS * 2 ** versuch, RECONNECT_DELAY_MAX_MS);
+        const warte = Math.round(basis * (0.9 + Math.random() * 0.2));
+        if (versuch > 0) {
+            this.log.info(`Next connection attempt in ${Math.round(warte / 1000)} s`);
+        }
         this.reconnectTimer = this.setTimeout(() => {
             this.reconnectTimer = null;
             if (!this.stopping) {
-                this.connect();
+                this.connect().catch(e => this.log.warn(`Connect: ${e.message}`));
             }
-        }, RECONNECT_DELAY_MS);
+        }, warte);
     }
 
     onUnload(callback) {

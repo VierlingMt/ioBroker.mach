@@ -116,8 +116,8 @@ the LTE connection or brick the box – with no way back remotely.
 | `control.reboot` | button: restart the box |
 | `tlv.*` | raw values that are not in the value table (for analysis) |
 
-The value table itself is saved to `0_userdata.0/mach/drivers.json` for
-reference.
+The value table itself is saved to the file storage of the instance
+(admin → Files → `mach.0/drivers.json`) for reference.
 
 **Tip for automations:** only act on values when `info.lastAllValuesAt` is
 recent (e.g. younger than 30 minutes). If the box loses LTE, the last values
