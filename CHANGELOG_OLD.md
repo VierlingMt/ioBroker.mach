@@ -1,6 +1,6 @@
 # Older changes
 
-### 1.3.6 (2026-10-28)
+## 1.3.6 (2026-10-28)
 
 - Read-only states no longer use `switch.*` or `level.*` roles: on/off values
   are `indicator`, temperatures `value.temperature`, everything else `value`.
@@ -9,25 +9,25 @@
   folders, `tlv.<id>` and `frames.<id>` channels. Created on the next start
   for existing installations.
 
-### 1.3.5 (2026-10-28)
+## 1.3.5 (2026-10-28)
 
 - No functional changes. Releases are tagged by a push again, so every
   release has a tag-triggered test run as the ioBroker repository check
   expects.
 
-### 1.3.4 (2026-10-28)
+## 1.3.4 (2026-10-28)
 
 - Settings page translations (`admin/i18n`) are now part of the npm package.
 - Requires admin 7.6.20.
 
-### 1.3.3 (2026-10-28)
+## 1.3.3 (2026-10-28)
 
 - Settings page translated into 11 languages, with responsive layout.
 - Timers are managed by ioBroker (`this.setTimeout`/`this.setInterval`).
 - Requires Node.js 22, js-controller 6.0.11 and admin 7.6.17.
 - Releases are published to npm via trusted publishing.
 
-### 1.3.2 (2026-10-28)
+## 1.3.2 (2026-10-28)
 
 First public release. Earlier versions were developed and tested privately
 on one box (Adria Adora, MACH V2, LTE).

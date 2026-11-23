@@ -9,14 +9,32 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+-**'
   pull_request: {}
   # Release per Knopfdruck (Actions → Test and Release → Run workflow):
-  # setzt nur den Tag v<version>. Der Tag-Push startet danach den normalen
-  # Lauf mit Tests, npm-Veröffentlichung und GitHub-Release – genau den
-  # Lauf, den der ioBroker-Repochecker beim Tag erwartet.
+  # startet das Release-Script (@alcalzone/release-script). Es erhöht die
+  # Version in package.json und io-package.json, macht aus
+  # "### **WORK IN PROGRESS**" im README den Versionseintrag, übernimmt ihn
+  # übersetzt in common.news, committet und setzt den Tag v<version>.
+  # Der Tag-Push startet danach den normalen Lauf mit Tests,
+  # npm-Veröffentlichung und GitHub-Release.
+  # Lokal geht dasselbe mit: npm run release patch (bzw. minor, major ...)
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version, die veröffentlicht wird (muss in package.json stehen, z. B. 1.3.4)'
+      bump:
+        description: 'Versionssprung'
         required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+          - prerelease
+      preid:
+        description: 'Kennung für Vorabversionen (nur bei pre*), z. B. beta'
+        required: false
+        default: 'beta'
         type: string
 
 concurrency:
@@ -47,10 +65,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           os: ${{ matrix.os }}
 
-  # Knopfdruck: Version prüfen und Tag setzen. Der Tag wird mit
+  # Knopfdruck: Release-Script ausführen. Commit und Tag werden mit
   # RELEASE_TOKEN gepusht – ein mit GITHUB_TOKEN gepushter Tag würde
   # absichtlich keinen weiteren Workflow-Lauf auslösen.
-  create-tag:
+  release:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -59,26 +77,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.RELEASE_TOKEN }}
+          fetch-depth: 0
 
-      - name: Check version and push tag
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run release script
         env:
-          VERSION: ${{ inputs.version }}
+          BUMP: ${{ inputs.bump }}
+          PREID: ${{ inputs.preid }}
         run: |
           set -euo pipefail
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]] || { echo "::error::Ungültige Version: $VERSION"; exit 1; }
-          PKG=$(jq -r .version package.json)
-          IOP=$(jq -r .common.version io-package.json)
-          [[ "$PKG" == "$VERSION" && "$IOP" == "$VERSION" ]] || { echo "::error::package.json hat $PKG, io-package.json $IOP – erwartet $VERSION"; exit 1; }
-          grep -q "^### $VERSION " README.md || { echo "::error::README-Changelog hat keinen Eintrag für $VERSION"; exit 1; }
-          if git ls-remote --exit-code --tags origin "refs/tags/v$VERSION" >/dev/null; then
-            echo "::error::Tag v$VERSION gibt es schon"; exit 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ARGS=("$BUMP")
+          if [[ "$BUMP" == pre* && -n "$PREID" ]]; then
+            ARGS+=("$PREID")
           fi
-          if curl -fsS -o /dev/null "https://registry.npmjs.org/iobroker.mach/$VERSION"; then
-            echo "::error::Version $VERSION ist schon auf npm"; exit 1
-          fi
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
-          echo "Tag v$VERSION gesetzt – der Tag-Lauf veröffentlicht jetzt."
+          npx release-script "${ARGS[@]}" --yes
 
   # Veröffentlicht auf npm, sobald ein Tag v1.2.3 gepusht wird – per
   # Trusted Publishing (OIDC), ohne gespeicherten npm-Token.
