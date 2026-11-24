@@ -27,6 +27,8 @@ Risiko, besonders beim Schalten aus der Ferne.
 - Konfiguration: E-Mail, Passwort und `machId` (App → Geräte-Einstellungen).
 - Für Automationen `info.lastAllValuesAt` prüfen: Sind die Daten älter als
   ca. 30 Minuten, hat die Box vermutlich keine Verbindung.
+- Rückmeldungen und Fragen: [Testthema im ioBroker-Forum](https://forum.iobroker.net/topic/85913/test-adapter-mach-v2.0.0)
+  oder ein [Issue auf GitHub](https://github.com/VierlingMt/ioBroker.mach/issues).
 
 **Lizenz:** Der Adapter ist frei unter der [MIT-Lizenz](../../LICENSE): nutzen,
 kopieren, ändern, weitergeben, auch kommerziell. Sie gilt nur für den hier
