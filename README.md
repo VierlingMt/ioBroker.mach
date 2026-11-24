@@ -141,6 +141,12 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- No functional changes. Releases are now made with the release script
+  (@alcalzone/release-script); integration test fixed for js-controller 8;
+  README links to the test thread in the ioBroker forum.
+
 ### 2.0.0 (2026-11-20)
 
 **Breaking changes – please read before updating from 1.x:**
