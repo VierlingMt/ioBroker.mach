@@ -1,6 +1,6 @@
 {
   "name": "iobroker.mach",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Adria caravans and motorhomes with the MACH box (Solvesall): read all values and switch everything the box allows. Unofficial.",
   "author": {
     "name": "Martin Vierling",

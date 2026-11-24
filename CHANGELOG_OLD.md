@@ -1,4 +1,8 @@
 # Older changes
+## 1.3.7 (2026-10-29)
+
+- Folders are also created at start for states from older versions that no
+  longer receive values (e.g. `frames.*`), so every object has its parents.
 
 ## 1.3.6 (2026-10-28)
 

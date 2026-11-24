@@ -141,7 +141,7 @@ raw captures in issues.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 2.0.1 (2026-11-24)
 
 - No functional changes. Releases are now made with the release script
   (@alcalzone/release-script); integration test fixed for js-controller 8;
@@ -199,11 +199,6 @@ Existing objects are converted on the next start.
 - Commands are queued, checked against range/step/selection and confirmed by
   asking the box for the value (GET_DEVICE_VALUE_FOR_VALUEID).
 - Values from push messages go to `values.*` right away.
-
-### 1.3.7 (2026-10-29)
-
-- Folders are also created at start for states from older versions that no
-  longer receive values (e.g. `frames.*`), so every object has its parents.
 
 Older entries are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
