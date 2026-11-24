@@ -37,8 +37,10 @@ on:
         default: 'beta'
         type: string
 
+# Eigene Gruppe je Auslöser: der Push des Release-Commits auf main darf
+# den laufenden Release-Lauf (workflow_dispatch) nicht abbrechen.
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
