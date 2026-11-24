@@ -45,7 +45,10 @@ tests.integration(path.join(__dirname, '..'), {
                 assert.equal(await da('mach.0.frames.1a800801'), false);
                 assert.equal(await da('mach.0.frames'), false);
                 assert.equal(await da('mach.0.tlv.00ab0001_t01.raw'), true, 'tlv.* is still used and must stay');
-                await harness.stopAdapter();
+                // Kein harness.stopAdapter(): ab js-controller 8 befolgt der
+                // Adapter sigKill nur vom eigenen Host, der Harness schickt es
+                // als system.host.testing und wartet dann ohne Zeitlimit. Das
+                // Testframework beendet den Adapter nach jedem Test selbst.
             });
         });
     },

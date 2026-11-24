@@ -131,6 +131,8 @@ See [docs/PROTOCOL.md](docs/PROTOCOL.md).
 
 Reports from other Adria models are very welcome – especially which values
 your box reports (`values.*`) and which of them can be switched.
+Feedback and questions: [test thread in the ioBroker forum](https://forum.iobroker.net/topic/85913/test-adapter-mach-v2.0.0)
+or a [GitHub issue](https://github.com/VierlingMt/ioBroker.mach/issues).
 Please **never** post your password, `machId`, `sharedSecret`, tokens or
 raw captures in issues.
 
